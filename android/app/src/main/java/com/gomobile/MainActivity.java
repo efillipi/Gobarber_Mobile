@@ -1,4 +1,4 @@
-import android.os.Bundle;
+// import android.os.Bundle;--- DOCUMENTAÇÃO
 
 package com.gomobile;
 
@@ -15,8 +15,8 @@ public class MainActivity extends ReactActivity {
     return "goMobile";
   }
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-  super.onCreate(null);
-}
+//   @Override
+//   protected void onCreate(Bundle savedInstanceState) {
+//   super.onCreate(null);
+// } --- DOCUMENTAÇÃO
 }
