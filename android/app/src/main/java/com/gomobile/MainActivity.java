@@ -1,3 +1,5 @@
+import android.os.Bundle;
+
 package com.gomobile;
 
 import com.facebook.react.ReactActivity;
@@ -12,4 +14,9 @@ public class MainActivity extends ReactActivity {
   protected String getMainComponentName() {
     return "goMobile";
   }
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+  super.onCreate(null);
+}
 }
