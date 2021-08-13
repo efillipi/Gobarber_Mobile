@@ -12,6 +12,7 @@ target 'goMobile' do
     :hermes_enabled => false
   )
 
+
   target 'goMobileTests' do
     inherit! :complete
     # Pods for testing
