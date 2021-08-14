@@ -53,7 +53,7 @@
 	<false/>
 	<key>UIAppFonts</key>
 	<array>
-		<string>RobotoSlab-Regular_Medium.ttf</string>
+		<string>RobotoSlab-Medium.ttf</string>
 		<string>RobotoSlab-Regular.ttf</string>
     <string>Feather.ttf</string>
 	</array>
