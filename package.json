@@ -7,7 +7,7 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint": "eslint ./src/ --ext .js,.jsx,.ts,.tsx",
     "dev:clear": "watchman watch-del-all && rm -f yarn.lock && rm -fr $TMPDIR/metro-cache && rm -rf node_modules && yarn && yarn start --reset-cache"
   },
   "dependencies": {
