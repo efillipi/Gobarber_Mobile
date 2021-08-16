@@ -1,5 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 import {
+  Alert,
   Image,
   View,
   KeyboardAvoidingView,
@@ -7,9 +8,11 @@ import {
   Platform,
   TextInput,
 } from 'react-native';
+import * as Yup from 'yup';
 import Icon from 'react-native-vector-icons/Feather';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
+import getValidationErrors from '../../utils/getValidationErrors';
 import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -23,13 +26,54 @@ import {
   CreateAccountButtonText,
 } from './styles';
 
+interface SignInFormData {
+  email: string;
+  password: string;
+}
+
 const SignIn: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
   const formRef = useRef<FormHandles>(null);
   const passwordInputRef = useRef<TextInput>(null);
 
-  const handleSignIn = useCallback((data: object) => {
-    console.log(data);
+  const handleSignIn = useCallback(async (data: SignInFormData) => {
+    try {
+      formRef.current?.setErrors({});
+
+      const schema = Yup.object().shape({
+        email: Yup.string()
+          .email('Digite um e-mail válido')
+          .required('E-mail obrigatório'),
+        password: Yup.string().required('Senha obrigatória'),
+      });
+
+      await schema.validate(data, {
+        abortEarly: false,
+      });
+
+      // await signIn({
+      //   email: data.email,
+      //   password: data.password,
+      // });
+
+      // history.push('/dashboard');
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
+
+        console.log('errors', errors);
+
+        formRef.current?.setErrors(errors);
+
+        return;
+      }
+
+      Alert.alert(
+        'Erro na autenticação',
+        'Ocorreu um erro ao fazer login, cheque as credenciais.',
+      );
+    }
   }, []);
+
   return (
     <>
       <KeyboardAvoidingView
@@ -73,6 +117,7 @@ const SignIn: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
               />
 
               <Button
+                activeOpacity={0.8}
                 onPress={() => {
                   formRef.current?.submitForm();
                 }}
