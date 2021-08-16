@@ -17,6 +17,7 @@ import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import logoImg from '../../assets/logo.png';
+import api from '../../services/api';
 import {
   Container,
   Title,
@@ -56,6 +57,8 @@ const SignIn: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
       // });
 
       // history.push('/dashboard');
+
+      Alert.alert('Alert Title', 'My dsdsdsdasd Msg');
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
