@@ -5,8 +5,8 @@ type StackParamList = {
   SignIn: undefined;
   Dashboard: undefined;
   Profile: undefined;
-  AppointmentDatePicker: undefined;
-  AppointmentCreated: undefined;
+  AppointmentDatePicker: { providerId: string };
+  AppointmentCreated: { providerId: string };
 };
 
 export type ProfileScreenNavigationProp =
