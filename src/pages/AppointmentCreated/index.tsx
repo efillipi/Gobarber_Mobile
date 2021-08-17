@@ -1,9 +1,9 @@
 import React, { useMemo, useCallback } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 
-import { useRoute, useNavigation } from '@react-navigation/native';
-
 import { Text } from 'react-native';
+import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
+
 import {
   Container,
   Title,
@@ -16,9 +16,10 @@ interface RouteParams {
   providerId: string;
 }
 
-const AppointmentCreated: React.FC = () => {
-  const route = useRoute();
-  const navigation = useNavigation();
+const AppointmentCreated: React.FC<ProfileScreenNavigationProp> = ({
+  navigation,
+  route,
+}) => {
   const params = route.params as RouteParams;
 
   const handleOk = useCallback(() => {
