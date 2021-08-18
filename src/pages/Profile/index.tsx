@@ -13,6 +13,7 @@ import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 
 import { useAuth } from '../../hooks/auth';
+import api from '../../services/api';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
@@ -30,6 +31,7 @@ interface ProfileFormData {
 const Profile: React.FC = () => {
   const { user } = useAuth();
   const formRef = useRef<FormHandles>(null);
+  const navigation = useNavigation();
 
   const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);

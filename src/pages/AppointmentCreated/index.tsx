@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
-
-import { Text } from 'react-native';
+import { format } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
 import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
 
 import {
@@ -13,7 +13,7 @@ import {
 } from './styles';
 
 interface RouteParams {
-  providerId: string;
+  date: number;
 }
 
 const AppointmentCreated: React.FC<ProfileScreenNavigationProp> = ({
@@ -21,6 +21,14 @@ const AppointmentCreated: React.FC<ProfileScreenNavigationProp> = ({
   route,
 }) => {
   const params = route.params as RouteParams;
+
+  const formattedDate = useMemo(() => {
+    return format(
+      params.date,
+      "EEEE', dia' dd 'de' MMMM 'de' yyyy 'às' HH:mm'h'",
+      { locale: ptBR },
+    );
+  }, [params.date]);
 
   const handleOk = useCallback(() => {
     navigation.reset({
@@ -38,7 +46,8 @@ const AppointmentCreated: React.FC<ProfileScreenNavigationProp> = ({
       <Icon name="check" size={80} color="#04d361" />
 
       <Title>Agendamento concluído</Title>
-      <Text>{params.providerId}</Text>
+      <Description>{formattedDate}</Description>
+
       <OkButton onPress={handleOk}>
         <OkButtonText>Ok</OkButtonText>
       </OkButton>
