@@ -54,7 +54,7 @@ export const ProvidersListTitle = styled.Text`
   margin-bottom: 24px;
 `;
 
-export const ProviderContainer = styled(RectButton)`
+export const ProviderContainer = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   padding: 20px;

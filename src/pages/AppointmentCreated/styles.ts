@@ -23,7 +23,7 @@ export const Description = styled.Text`
   margin-top: 16px;
 `;
 
-export const OkButton = styled(RectButton)`
+export const OkButton = styled.TouchableOpacity`
   padding: 12px 24px;
   background: #ff9000;
   justify-content: center;

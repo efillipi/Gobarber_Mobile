@@ -39,8 +39,6 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
     });
   }, []);
 
-  console.log('providers', providers);
-
   const handleSelectProvider = useCallback(
     (providerId: string) => {
       navigation.navigate('AppointmentDatePicker', { providerId });
