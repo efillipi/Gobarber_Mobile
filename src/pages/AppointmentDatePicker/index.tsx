@@ -43,11 +43,9 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
 }) => {
   const { user } = useAuth();
 
-  const params = route.params as RouteParams;
+  const { providerId } = route.params as RouteParams;
 
-  const [selectedProvider, setSelectedProvider] = useState<string>(
-    params.providerId,
-  );
+  const selectedProvider = providerId;
 
   const minimumDate = useMemo(() => {
     const today = new Date();
@@ -93,10 +91,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
 
       navigation.navigate('AppointmentCreated', { date: date.getTime() });
     } catch (err) {
-      Alert.alert(
-        'Erro ao criar agendamento',
-        'Ocorreu um erro ao tentar criar o agendamento, tente novamente!',
-      );
+      Alert.alert('Erro ao criar agendamento', `${err.response.data.message}`);
     }
   }, [selectedProvider, selectedDate, selectedHour, navigation]);
 
@@ -126,7 +121,6 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
         <BackButton onPress={() => navigation.goBack()}>
           <Icon name="chevron-left" size={24} color="#999591" />
         </BackButton>
-        {/* <HeaderTitle>Cabelereiros</HeaderTitle> */}
 
         <UserAvatar source={{ uri: user.avatar_url }} />
       </Header>
