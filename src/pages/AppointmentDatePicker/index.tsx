@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import { format } from 'date-fns';
 import { Alert } from 'react-native';
-import { Calendar, LocaleConfig } from 'react-native-calendars';
+
 import Calendars from '../../components/Calendar';
 import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
 
@@ -39,6 +39,14 @@ interface AvailabilityItem {
   available: boolean;
 }
 
+interface SelectedDate {
+  day: number;
+  month: number;
+  year: number;
+  timestamp: number;
+  dateString: string;
+}
+
 const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
   navigation,
   route,
@@ -52,25 +60,28 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
   const minimumDate = useMemo(() => {
     const today = new Date();
 
-    if (today.getHours() >= 17) {
-      return new Date(today.setDate(today.getDate() + 1));
-    }
+    const dateAlter = {
+      year: today.getFullYear(),
+      month: today.getMonth() + 1,
+      day: today.getDate(),
+      dateString: `${today}`,
+      timestamp: today.getTime(),
+    };
 
-    return today;
+    return dateAlter;
   }, []);
 
-  const [selectedDate, setSelectedDate] = useState(minimumDate);
+  const [selectedDate, setSelectedDate] = useState<SelectedDate>(minimumDate);
   const [selectedHour, setSelectedHour] = useState(0);
-
   const [availability, setAvailability] = useState<AvailabilityItem[]>([]);
 
   useEffect(() => {
     api
       .get(`/providers/${selectedProvider}/day-availability`, {
         params: {
-          year: selectedDate.getFullYear(),
-          month: selectedDate.getMonth() + 1,
-          day: selectedDate.getDate(),
+          year: selectedDate.year,
+          month: selectedDate.month,
+          day: selectedDate.day,
         },
       })
       .then((response) => {
@@ -80,8 +91,9 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
   }, [selectedProvider, selectedDate]);
 
   const handleCreateAppointment = useCallback(async () => {
+    const { year, month, day } = selectedDate;
     try {
-      const date = new Date(selectedDate);
+      const date = new Date(year, month - 1, day);
 
       date.setHours(selectedHour);
       date.setMinutes(0);
@@ -99,7 +111,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
 
   const morningAvailability = useMemo(() => {
     return availability
-      .filter(({ hour }) => hour < 12)
+      .filter(({ hour }) => hour <= 12)
       .map(({ hour, available }) => ({
         hour,
         hourFormatted: format(new Date().setHours(hour), 'HH:00'),
@@ -109,7 +121,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
 
   const afternoonAvailability = useMemo(() => {
     return availability
-      .filter(({ hour }) => hour >= 12)
+      .filter(({ hour }) => hour > 12)
       .map(({ hour, available }) => ({
         hour,
         hourFormatted: format(new Date().setHours(hour), 'HH:00'),
@@ -131,13 +143,15 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
           <Title>Calendario</Title>
           <Calendars
             onDayPress={(day) => {
-              console.log('Select', day);
+              setSelectedDate(day);
+              console.log('Select.day', day);
             }}
             // markedDates={{
-            //   '2021-08-23': { marked: true, selected: true },
-            //   '2021-08-24': { marked: true },
-            //   '2021-08-25': { marked: true, dotColor: 'red', activeOpacity: 0 },
-            //   '2021-08-26': { disabled: true, disableTouchEvent: true },
+            //   [selectedDate.dateString]: {
+            //     selectedColor: '#FF9000',
+            //     selectedTextColor: '#f4ede8',
+            //     selected: true,
+            //   },
             // }}
           />
 
@@ -151,7 +165,9 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
                 <Hour
                   available={available}
                   selected={hour === selectedHour}
-                  onPress={() => setSelectedHour(hour)}
+                  onPress={() => {
+                    setSelectedHour(hour);
+                  }}
                   key={hourFormatted}
                 >
                   <HourText selected={hour === selectedHour}>

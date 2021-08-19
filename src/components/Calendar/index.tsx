@@ -1,5 +1,4 @@
 import React from 'react';
-import { Text, View } from 'react-native';
 import { Calendar, LocaleConfig, CalendarProps } from 'react-native-calendars';
 
 LocaleConfig.locales.br = {
@@ -61,8 +60,6 @@ const Calendars: React.FC<CalendarProps> = ({ ...rest }) => {
         monthTextColor: '#f6f5f8',
         todayTextColor: '#FF9000',
         arrowColor: '#FF9000',
-        selectedDayBackgroundColor: '#ff0',
-        selectedDayTextColor: '#f00',
       }}
       {...rest}
     />
