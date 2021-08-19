@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import { format } from 'date-fns';
 import { Alert } from 'react-native';
+import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
 
 import api from '../../services/api';
@@ -21,6 +22,49 @@ import {
   CreateAppointmentButton,
   CreateAppointmentButtonText,
 } from './styles';
+
+LocaleConfig.locales.br = {
+  monthNames: [
+    'Janeiro',
+    'Fevereiro',
+    'Março',
+    'Abril',
+    'Maio',
+    'Junho',
+    'Julho',
+    'Agosto',
+    'Setembro',
+    'Outubro',
+    'Novembro',
+    'Dezembro',
+  ],
+  monthNamesShort: [
+    'Jan',
+    'Fev',
+    'Mar',
+    'Abr',
+    'Mai',
+    'Jun',
+    'Jul',
+    'Ago',
+    'Set',
+    'Out',
+    'Nov',
+    'Dez',
+  ],
+  dayNames: [
+    'Dimanche',
+    'Lundi',
+    'Mardi',
+    'Mercredi',
+    'Jeudi',
+    'Vendredi',
+    'Samedi',
+  ],
+  dayNamesShort: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'],
+  today: 'HOJE',
+};
+LocaleConfig.defaultLocale = 'br';
 
 export interface Provider {
   id: string;
@@ -126,6 +170,29 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
       </Header>
       <Container>
         <Schedule>
+          <SectionTitle>Calendario</SectionTitle>
+          <Calendar
+            theme={{
+              calendarBackground: '#312e38',
+              dayTextColor: '#f6f5f8',
+              monthTextColor: '#f6f5f8',
+              todayTextColor: '#FF9000',
+            }}
+            onDayPress={(day) => {
+              console.log('selected day', day);
+            }}
+            markedDates={{
+              '2021-08-23': {
+                selected: true,
+                marked: true,
+                selectedColor: 'pink',
+              },
+              '2021-08-24': { marked: true },
+              '2021-08-25': { marked: true, dotColor: 'red', activeOpacity: 0 },
+              '2021-08-26': { disabled: true, disableTouchEvent: true },
+            }}
+          />
+
           <Title>Escolha o horário</Title>
 
           <Section>
