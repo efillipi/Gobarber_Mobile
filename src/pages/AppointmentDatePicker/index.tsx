@@ -3,7 +3,6 @@ import Icon from 'react-native-vector-icons/Feather';
 import { format } from 'date-fns';
 import { Alert } from 'react-native';
 import Calendars from '../../components/Calendar';
-
 import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
@@ -45,6 +44,19 @@ interface AvailabilityItem {
   available: boolean;
 }
 
+interface CalendarObjects {
+  day: number;
+  month: number;
+  year: number;
+  timestamp: number;
+  dateString: string;
+}
+
+interface MonthAvailabilityItem {
+  day: number;
+  available: boolean;
+}
+
 const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
   navigation,
   route,
@@ -57,20 +69,31 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
   );
 
   const minimumDate = useMemo(() => {
-    const today = new Date();
-
-    if (today.getHours() >= 17) {
-      return new Date(today.setDate(today.getDate() + 1));
-    }
-
-    return today;
+    const date = new Date();
+    return {
+      day: date.getDay(),
+      month: date.getMonth() + 1,
+      year: date.getFullYear(),
+      timestamp: date.getTime(),
+      dateString: `${date.getFullYear()}-${
+        date.getMonth() + 1
+      }-${date.getDay()}`,
+    };
   }, []);
 
-  const [selectedDate, setSelectedDate] = useState(minimumDate);
+  const [selectedDate, setSelectedDate] =
+    useState<CalendarObjects>(minimumDate);
+
+  const [disabledDay, setDisabledDay] = useState({});
+
   const [selectedHour, setSelectedHour] = useState(0);
 
   const [providers, setProviders] = useState<Provider[]>([]);
   const [availability, setAvailability] = useState<AvailabilityItem[]>([]);
+
+  const [monthAvailability, setMonthAvailability] = useState<
+    MonthAvailabilityItem[]
+  >([]);
 
   useEffect(() => {
     api.get('providers').then((response) => {
@@ -80,11 +103,36 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
 
   useEffect(() => {
     api
+      .get(`/providers/${selectedProvider}/month-availability`, {
+        params: {
+          year: selectedDate.year,
+          month: selectedDate.month,
+        },
+      })
+      .then((response) => {
+        setMonthAvailability(response.data);
+      });
+  }, [selectedDate, selectedProvider]);
+
+  const daysFull = useMemo(() => {
+    const dates = monthAvailability
+      .filter((monthDay) => monthDay.available === false)
+      .map((monthDay) => {
+        const { year } = selectedDate;
+        const { month } = selectedDate;
+        return `'${year}-${month}-${monthDay.day}':{{disabled: true, disableTouchEvent: true}},`;
+      });
+
+    return dates;
+  }, [selectedDate, monthAvailability]);
+
+  useEffect(() => {
+    api
       .get(`/providers/${selectedProvider}/day-availability`, {
         params: {
-          year: selectedDate.getFullYear(),
-          month: selectedDate.getMonth() + 1,
-          day: selectedDate.getDate(),
+          year: selectedDate.year,
+          month: selectedDate.month,
+          day: selectedDate.day,
         },
       })
       .then((response) => {
@@ -99,7 +147,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
 
   const handleCreateAppointment = useCallback(async () => {
     try {
-      const date = new Date(selectedDate);
+      const date = new Date(selectedDate.timestamp);
 
       date.setHours(selectedHour);
       date.setMinutes(0);
@@ -117,7 +165,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
 
   const morningAvailability = useMemo(() => {
     return availability
-      .filter(({ hour }) => hour < 12)
+      .filter(({ hour }) => hour <= 12)
       .map(({ hour, available }) => ({
         hour,
         hourFormatted: format(new Date().setHours(hour), 'HH:00'),
@@ -127,7 +175,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
 
   const afternoonAvailability = useMemo(() => {
     return availability
-      .filter(({ hour }) => hour >= 12)
+      .filter(({ hour }) => hour > 12)
       .map(({ hour, available }) => ({
         hour,
         hourFormatted: format(new Date().setHours(hour), 'HH:00'),
@@ -163,19 +211,14 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
             )}
           />
         </ProvidersListContainer>
-
         <Calendar>
           <Title>Escolha a data</Title>
           <Calendars
             onDayPress={(day) => {
-              setSelectedDate(new Date(day.year, day.month - 1, day.day));
+              setSelectedDate(day);
             }}
-            markedDates={{
-              [selectedDate]: {
-                selectedColor: '#FF9000',
-                selectedTextColor: '#f4ede8',
-                selected: true,
-              },
+            onMonthChange={(month) => {
+              setSelectedDate(month);
             }}
           />
         </Calendar>

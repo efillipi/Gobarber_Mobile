@@ -71,7 +71,7 @@ export const ProvidersList = styled(
   },
 })``;
 
-export const ProviderContainer = styled(RectButton)<ProviderContainerProps>`
+export const ProviderContainer = styled.TouchableOpacity<ProviderContainerProps>`
   flex-direction: row;
   align-items: center;
   padding: 8px 12px;
@@ -126,7 +126,7 @@ export const SectionContent = styled.ScrollView.attrs({
   },
 })``;
 
-export const Hour = styled(RectButton).attrs((props: HourProps) => ({
+export const Hour = styled.TouchableOpacity.attrs((props: HourProps) => ({
   enabled: props.available,
 }))<HourProps>`
   padding: 12px;
@@ -143,7 +143,7 @@ export const HourText = styled.Text<HourTextProps>`
   font-size: 18px;
 `;
 
-export const CreateAppointmentButton = styled(RectButton)`
+export const CreateAppointmentButton = styled.TouchableOpacity`
   background: #ff9000;
   border-radius: 10px;
   height: 50px;

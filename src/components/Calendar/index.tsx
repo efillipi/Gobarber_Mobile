@@ -48,13 +48,6 @@ const Calendars: React.FC<CalendarProps> = ({ ...rest }) => {
   return (
     <Calendar
       theme={{
-        'stylesheet.calendar.header': {
-          week: {
-            marginTop: 5,
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          },
-        },
         calendarBackground: '#312e38',
         dayTextColor: '#f6f5f8',
         monthTextColor: '#f6f5f8',
