@@ -69,22 +69,20 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
   );
 
   const minimumDate = useMemo(() => {
-    const date = new Date();
+    const firstDate = new Date();
     return {
-      day: date.getDay(),
-      month: date.getMonth() + 1,
-      year: date.getFullYear(),
-      timestamp: date.getTime(),
-      dateString: `${date.getFullYear()}-${
-        date.getMonth() + 1
-      }-${date.getDay()}`,
+      day: firstDate.getDate(),
+      month: firstDate.getMonth() + 1,
+      year: firstDate.getFullYear(),
+      timestamp: firstDate.getTime(),
+      dateString: `${firstDate.getFullYear()}-${
+        firstDate.getMonth() + 1
+      }-${firstDate.getDate()}`,
     };
   }, []);
 
   const [selectedDate, setSelectedDate] =
     useState<CalendarObjects>(minimumDate);
-
-  const [disabledDay, setDisabledDay] = useState({});
 
   const [selectedHour, setSelectedHour] = useState(0);
 
@@ -106,7 +104,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
       .get(`/providers/${selectedProvider}/month-availability`, {
         params: {
           year: selectedDate.year,
-          month: selectedDate.month,
+          month: String(selectedDate.month).padStart(2, '0'),
         },
       })
       .then((response) => {
@@ -115,15 +113,48 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
   }, [selectedDate, selectedProvider]);
 
   const daysFull = useMemo(() => {
-    const dates = monthAvailability
+    const unavailableDays = monthAvailability
       .filter((monthDay) => monthDay.available === false)
       .map((monthDay) => {
-        const { year } = selectedDate;
-        const { month } = selectedDate;
-        return `'${year}-${month}-${monthDay.day}':{{disabled: true, disableTouchEvent: true}},`;
+        const year = String(selectedDate.year).padStart(2, '0');
+        const month = String(selectedDate.month).padStart(2, '0');
+        const day = String(monthDay.day).padStart(2, '0');
+        const data = `${year}-${month}-${day}`;
+        return data;
       });
 
-    return dates;
+    const availableDays = monthAvailability
+      .filter((monthDay) => monthDay.available === true)
+      .map((monthDay) => {
+        const year = String(selectedDate.year).padStart(2, '0');
+        const month = String(selectedDate.month).padStart(2, '0');
+        const day = String(monthDay.day).padStart(2, '0');
+        const data = `${year}-${month}-${day}`;
+        return data;
+      });
+
+    const unavailableDaysObjet = unavailableDays.reduce(
+      (objet: any, value: any) => {
+        objet[value] = {
+          disabled: true,
+          disableTouchEvent: true,
+          marked: true,
+          dotColor: 'red',
+        };
+        return objet;
+      },
+      {},
+    );
+
+    const availableDaysObjet = availableDays.reduce(
+      (objet: any, value: any) => {
+        objet[value] = { marked: true, activeOpacity: 0 };
+        return objet;
+      },
+      unavailableDaysObjet,
+    );
+
+    return availableDaysObjet;
   }, [selectedDate, monthAvailability]);
 
   useEffect(() => {
@@ -131,8 +162,8 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
       .get(`/providers/${selectedProvider}/day-availability`, {
         params: {
           year: selectedDate.year,
-          month: selectedDate.month,
-          day: selectedDate.day,
+          month: String(selectedDate.month).padStart(2, '0'),
+          day: String(selectedDate.day).padStart(2, '0'),
         },
       })
       .then((response) => {
@@ -147,17 +178,21 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
 
   const handleCreateAppointment = useCallback(async () => {
     try {
-      const date = new Date(selectedDate.timestamp);
-
-      date.setHours(selectedHour);
-      date.setMinutes(0);
+      const data = new Date(
+        `${selectedDate.dateString}T${String(selectedHour).padStart(
+          2,
+          '0',
+        )}:00:00`,
+      );
 
       await api.post('appointments', {
         provider_id: selectedProvider,
-        dateAppointment: date,
+        dateAppointment: data,
       });
 
-      navigation.navigate('AppointmentCreated', { date: date.getTime() });
+      navigation.navigate('AppointmentCreated', {
+        date: data.getTime(),
+      });
     } catch (err) {
       Alert.alert('Erro ao criar agendamento', `${err.response.data.message}`);
     }
@@ -220,6 +255,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
             onMonthChange={(month) => {
               setSelectedDate(month);
             }}
+            markedDates={daysFull}
           />
         </Calendar>
 

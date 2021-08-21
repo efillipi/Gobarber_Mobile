@@ -40,6 +40,7 @@
     "import/no-duplicates": "off",
     "@typescript-eslint/camelcase": "off",
     "@typescript-eslint/ban-types": "off",
+    "no-param-reassign":"off",
     "@typescript-eslint/explicit-function-return-type": [
       "error",
       {
