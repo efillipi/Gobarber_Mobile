@@ -116,6 +116,8 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
 
   useMemo(() => {
     const daysOff: string[] = [];
+    const dayOffOne = 5;
+    const dayOffTwo = 6;
     const unavailableDays = monthAvailability
       .filter((monthDay) => monthDay.available === false)
       .map((monthDay) => {
@@ -182,7 +184,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
       const month = String(currentMonth.getMonth() + 1).padStart(2, '0');
       const day = String(monthDay.day).padStart(2, '0');
       const data = new Date(`${year}-${month}-${day}`);
-      if (data.getDay() === 6 || data.getDay() === 5) {
+      if (data.getDay() === dayOffOne || data.getDay() === dayOffTwo) {
         const data_data = `${year}-${month}-${day}`;
         daysOff.push(data_data);
       }
