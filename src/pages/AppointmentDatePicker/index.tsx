@@ -115,6 +115,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
   }, [currentMonth, selectedProvider]);
 
   useMemo(() => {
+    const daysOff: string[] = [];
     const unavailableDays = monthAvailability
       .filter((monthDay) => monthDay.available === false)
       .map((monthDay) => {
@@ -141,7 +142,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
           disableTouchEvent: true,
           customStyles: {
             container: {
-              backgroundColor: '#3e3b472b',
+              backgroundColor: '#3e3b4749',
             },
             text: {
               color: '#f4ede89b',
@@ -176,7 +177,33 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
       selectedTextColor: '#232129',
     };
 
-    setMarkedDate(availableDaysObjet_unavailableDaysObjet);
+    monthAvailability.forEach((monthDay) => {
+      const year = currentMonth.getFullYear();
+      const month = String(currentMonth.getMonth() + 1).padStart(2, '0');
+      const day = String(monthDay.day).padStart(2, '0');
+      const data = new Date(`${year}-${month}-${day}`);
+      if (data.getDay() === 6 || data.getDay() === 5) {
+        const data_data = `${year}-${month}-${day}`;
+        daysOff.push(data_data);
+      }
+    });
+
+    const availableDaysObjet_unavailableDaysObjet_disableObjet = daysOff.reduce(
+      (objet: any, value: any) => {
+        objet[value] = {
+          disableTouchEvent: true,
+          customStyles: {
+            text: {
+              color: '#f4ede89b',
+            },
+          },
+        };
+        return objet;
+      },
+      availableDaysObjet_unavailableDaysObjet,
+    );
+
+    setMarkedDate(availableDaysObjet_unavailableDaysObjet_disableObjet);
   }, [currentMonth, monthAvailability, selectedDate]);
 
   useEffect(() => {
