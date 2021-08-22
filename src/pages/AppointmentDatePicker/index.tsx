@@ -24,6 +24,7 @@ import {
   Section,
   SectionTitle,
   SectionContent,
+  HourContainer,
   Hour,
   HourText,
   CreateAppointmentButton,
@@ -238,20 +239,24 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
 
   const handleCreateAppointment = useCallback(async () => {
     try {
-      const data = new Date(
-        `${selectedDate.dateString}T${String(selectedHour).padStart(
-          2,
-          '0',
-        )}:00:00`,
+      const date = `${selectedDate.dateString}T${String(selectedHour).padStart(
+        2,
+        '0',
+      )}:00`;
+      const AppointmentCreated = new Date(date);
+
+      console.log('handleCreateAppointment date', date);
+      console.log(
+        'handleCreateAppointment AppointmentCreated',
+        AppointmentCreated,
       );
 
       await api.post('appointments', {
         provider_id: selectedProvider,
-        dateAppointment: data,
+        dateAppointment: date,
       });
-
       navigation.navigate('AppointmentCreated', {
-        date: data.getTime(),
+        date: AppointmentCreated.getTime(),
       });
     } catch (err) {
       Alert.alert('Erro ao criar agendamento', `${err.response.data.message}`);
@@ -328,16 +333,21 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
 
             <SectionContent>
               {morningAvailability.map(({ hourFormatted, hour, available }) => (
-                <Hour
-                  available={available}
-                  selected={hour === selectedHour}
-                  onPress={() => setSelectedHour(hour)}
-                  key={hourFormatted}
+                <HourContainer
+                  onPress={() => {
+                    setSelectedHour(hour);
+                  }}
                 >
-                  <HourText selected={hour === selectedHour}>
-                    {hourFormatted}
-                  </HourText>
-                </Hour>
+                  <Hour
+                    available={available}
+                    selected={hour === selectedHour}
+                    key={hourFormatted}
+                  >
+                    <HourText selected={hour === selectedHour}>
+                      {hourFormatted}
+                    </HourText>
+                  </Hour>
+                </HourContainer>
               ))}
             </SectionContent>
           </Section>
@@ -348,16 +358,21 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
             <SectionContent>
               {afternoonAvailability.map(
                 ({ hourFormatted, hour, available }) => (
-                  <Hour
-                    available={available}
-                    selected={hour === selectedHour}
-                    onPress={() => setSelectedHour(hour)}
-                    key={hourFormatted}
+                  <HourContainer
+                    onPress={() => {
+                      setSelectedHour(hour);
+                    }}
                   >
-                    <HourText selected={hour === selectedHour}>
-                      {hourFormatted}
-                    </HourText>
-                  </Hour>
+                    <Hour
+                      available={available}
+                      selected={hour === selectedHour}
+                      key={hourFormatted}
+                    >
+                      <HourText selected={hour === selectedHour}>
+                        {hourFormatted}
+                      </HourText>
+                    </Hour>
+                  </HourContainer>
                 ),
               )}
             </SectionContent>

@@ -126,6 +126,8 @@ export const SectionContent = styled.ScrollView.attrs({
   },
 })``;
 
+export const HourContainer = styled.TouchableOpacity``;
+
 export const Hour = styled(RectButton).attrs((props: HourProps) => ({
   enabled: props.available,
 }))<HourProps>`
