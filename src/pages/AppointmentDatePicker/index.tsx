@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import { format } from 'date-fns';
@@ -85,6 +86,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
     useState<CalendarObjects>(minimumDate);
 
   const [selectedHour, setSelectedHour] = useState(0);
+  const [markedDate, setMarkedDate] = useState({});
 
   const [providers, setProviders] = useState<Provider[]>([]);
   const [availability, setAvailability] = useState<AvailabilityItem[]>([]);
@@ -112,7 +114,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
       });
   }, [selectedDate, selectedProvider]);
 
-  const daysFull = useMemo(() => {
+  useMemo(() => {
     const unavailableDays = monthAvailability
       .filter((monthDay) => monthDay.available === false)
       .map((monthDay) => {
@@ -136,26 +138,40 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
     const unavailableDaysObjet = unavailableDays.reduce(
       (objet: any, value: any) => {
         objet[value] = {
-          disabled: true,
           disableTouchEvent: true,
-          marked: true,
-          dotColor: 'red',
+          customStyles: {
+            container: {
+              backgroundColor: '#3e3b472b',
+            },
+            text: {
+              color: '#f4ede89b',
+            },
+          },
         };
         return objet;
       },
       {},
     );
 
-    const availableDaysObjet = availableDays.reduce(
+    const availableDaysObjet_unavailableDaysObjet = availableDays.reduce(
       (objet: any, value: any) => {
-        objet[value] = { marked: true, activeOpacity: 0 };
+        objet[value] = {
+          customStyles: {
+            container: {
+              backgroundColor: '#3e3b47',
+            },
+            text: {
+              color: '#f4ede8',
+            },
+          },
+        };
         return objet;
       },
       unavailableDaysObjet,
     );
 
-    return availableDaysObjet;
-  }, [selectedDate, monthAvailability]);
+    setMarkedDate(availableDaysObjet_unavailableDaysObjet);
+  }, []);
 
   useEffect(() => {
     api
@@ -255,7 +271,8 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
             onMonthChange={(month) => {
               setSelectedDate(month);
             }}
-            markedDates={daysFull}
+            markingType="custom"
+            markedDates={markedDate}
           />
         </Calendar>
 

@@ -51,7 +51,6 @@ const Calendars: React.FC<CalendarProps> = ({ ...rest }) => {
         calendarBackground: '#312e38',
         dayTextColor: '#f6f5f8',
         monthTextColor: '#f6f5f8',
-        todayTextColor: '#FF9000',
         arrowColor: '#FF9000',
       }}
       {...rest}
