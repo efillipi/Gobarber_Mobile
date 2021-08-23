@@ -216,24 +216,18 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
 
   const handleCreateAppointment = useCallback(async () => {
     try {
-      const date = `${selectedDate.dateString}T${String(selectedHour).padStart(
-        2,
-        '0',
-      )}:00`;
-      const AppointmentCreated = new Date(date);
+      const date = new Date(selectedDate.timestamp);
 
-      console.log('handleCreateAppointment date', date);
-      console.log(
-        'handleCreateAppointment AppointmentCreated',
-        AppointmentCreated,
-      );
+      date.setDate(selectedDate.day);
+      date.setHours(selectedHour);
+      date.setMinutes(0);
 
       await api.post('appointments', {
         provider_id: selectedProvider,
         dateAppointment: date,
       });
       navigation.navigate('AppointmentCreated', {
-        date: AppointmentCreated.getTime(),
+        date: date.getTime(),
       });
     } catch (err) {
       Alert.alert('Erro ao criar agendamento', `${err.response.data.message}`);
