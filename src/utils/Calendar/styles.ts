@@ -29,7 +29,8 @@ export const unavailableDaysStyles = {
   customStyles: {
     container: {
       backgroundColor: '#3e3b47',
-      opacity: 0.3,
+
+      opacity: 0.6,
       borderRadius: 10,
     },
     text: {
@@ -41,6 +42,20 @@ export const unavailableDaysStyles = {
 export const daysOffStyles = {
   disableTouchEvent: true,
   customStyles: {
+    text: {
+      color: '#f4ede89b',
+    },
+  },
+};
+
+export const pastDaysStyles = {
+  disableTouchEvent: true,
+  customStyles: {
+    container: {
+      backgroundColor: '#3e3b47',
+      opacity: 0.3,
+      borderRadius: 10,
+    },
     text: {
       color: '#f4ede89b',
     },

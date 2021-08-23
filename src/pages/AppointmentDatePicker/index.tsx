@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
-import { format } from 'date-fns';
+import { format, isBefore } from 'date-fns';
 import { Alert } from 'react-native';
 import Calendars from '../../components/Calendar';
 import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
@@ -12,6 +12,7 @@ import {
   availableDaysStyles,
   daysOffStyles,
   unavailableDaysStyles,
+  pastDaysStyles,
 } from '../../utils/Calendar/styles';
 import {
   Container,
@@ -145,6 +146,21 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
         return data;
       });
 
+    const pastDays = availableDays.filter((pastDay) =>
+      isBefore(new Date(pastDay), new Date(minimumDate.dateString)),
+    );
+
+    monthAvailability.forEach((monthDay) => {
+      const year = currentMonth.getFullYear();
+      const month = String(currentMonth.getMonth() + 1).padStart(2, '0');
+      const day = String(monthDay.day).padStart(2, '0');
+      const data = new Date(`${year}-${month}-${day}`);
+      if (data.getDay() === dayOffOne || data.getDay() === dayOffTwo) {
+        const data_data = `${year}-${month}-${day}`;
+        daysOff.push(data_data);
+      }
+    });
+
     const unavailableDaysObjet = unavailableDays.reduce(
       (objet: any, value: any) => {
         objet[value] = unavailableDaysStyles;
@@ -161,30 +177,26 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
       unavailableDaysObjet,
     );
 
-    availableDaysObjet_unavailableDaysObjet[selectedDate.dateString] =
-      selectedStyles;
+    const availableDaysObjet_unavailableDaysObjet_pastDaysObject =
+      pastDays.reduce((objet: any, value: any) => {
+        objet[value] = pastDaysStyles;
+        return objet;
+      }, availableDaysObjet_unavailableDaysObjet);
 
-    monthAvailability.forEach((monthDay) => {
-      const year = currentMonth.getFullYear();
-      const month = String(currentMonth.getMonth() + 1).padStart(2, '0');
-      const day = String(monthDay.day).padStart(2, '0');
-      const data = new Date(`${year}-${month}-${day}`);
-      if (data.getDay() === dayOffOne || data.getDay() === dayOffTwo) {
-        const data_data = `${year}-${month}-${day}`;
-        daysOff.push(data_data);
-      }
-    });
+    availableDaysObjet_unavailableDaysObjet_pastDaysObject[
+      selectedDate.dateString
+    ] = selectedStyles;
 
-    const availableDaysObjet_unavailableDaysObjet_disableObjet = daysOff.reduce(
-      (objet: any, value: any) => {
+    const availableDaysObjet_unavailableDaysObjet_pastDaysObject_selectedObject_daysOffObjet =
+      daysOff.reduce((objet: any, value: any) => {
         objet[value] = daysOffStyles;
         return objet;
-      },
-      availableDaysObjet_unavailableDaysObjet,
-    );
+      }, availableDaysObjet_unavailableDaysObjet_pastDaysObject);
 
-    setMarkedDate(availableDaysObjet_unavailableDaysObjet_disableObjet);
-  }, [currentMonth, monthAvailability, selectedDate]);
+    setMarkedDate(
+      availableDaysObjet_unavailableDaysObjet_pastDaysObject_selectedObject_daysOffObjet,
+    );
+  }, [currentMonth, monthAvailability, selectedDate, minimumDate]);
 
   useEffect(() => {
     api
