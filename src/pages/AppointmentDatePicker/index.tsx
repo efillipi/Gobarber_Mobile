@@ -317,6 +317,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
             <SectionContent>
               {morningAvailability.map(({ hourFormatted, hour, available }) => (
                 <HourContainer
+                  key={hourFormatted}
                   onPress={() => {
                     setSelectedHour(hour);
                   }}
@@ -342,6 +343,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
               {afternoonAvailability.map(
                 ({ hourFormatted, hour, available }) => (
                   <HourContainer
+                    key={hourFormatted}
                     onPress={() => {
                       setSelectedHour(hour);
                     }}
