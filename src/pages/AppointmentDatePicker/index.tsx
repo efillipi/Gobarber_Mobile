@@ -8,6 +8,12 @@ import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
 import {
+  selectedStyles,
+  availableDaysStyles,
+  daysOffStyles,
+  unavailableDaysStyles,
+} from '../../utils/Calendar/styles';
+import {
   Container,
   Header,
   BackButton,
@@ -141,17 +147,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
 
     const unavailableDaysObjet = unavailableDays.reduce(
       (objet: any, value: any) => {
-        objet[value] = {
-          disableTouchEvent: true,
-          customStyles: {
-            container: {
-              backgroundColor: '#3e3b4749',
-            },
-            text: {
-              color: '#f4ede89b',
-            },
-          },
-        };
+        objet[value] = unavailableDaysStyles;
         return objet;
       },
       {},
@@ -159,26 +155,14 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
 
     const availableDaysObjet_unavailableDaysObjet = availableDays.reduce(
       (objet: any, value: any) => {
-        objet[value] = {
-          customStyles: {
-            container: {
-              backgroundColor: '#3e3b47',
-            },
-            text: {
-              color: '#f4ede8',
-            },
-          },
-        };
+        objet[value] = availableDaysStyles;
         return objet;
       },
       unavailableDaysObjet,
     );
 
-    availableDaysObjet_unavailableDaysObjet[selectedDate.dateString] = {
-      selected: true,
-      selectedColor: '#ff9000',
-      selectedTextColor: '#232129',
-    };
+    availableDaysObjet_unavailableDaysObjet[selectedDate.dateString] =
+      selectedStyles;
 
     monthAvailability.forEach((monthDay) => {
       const year = currentMonth.getFullYear();
@@ -193,14 +177,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
 
     const availableDaysObjet_unavailableDaysObjet_disableObjet = daysOff.reduce(
       (objet: any, value: any) => {
-        objet[value] = {
-          disableTouchEvent: true,
-          customStyles: {
-            text: {
-              color: '#f4ede89b',
-            },
-          },
-        };
+        objet[value] = daysOffStyles;
         return objet;
       },
       availableDaysObjet_unavailableDaysObjet,
