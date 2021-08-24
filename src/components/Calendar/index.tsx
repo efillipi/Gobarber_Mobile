@@ -53,6 +53,7 @@ const Calendars: React.FC<CalendarProps> = ({ ...rest }) => {
         monthTextColor: '#f6f5f8',
         arrowColor: '#FF9000',
       }}
+      hideExtraDays
       {...rest}
     />
   );
