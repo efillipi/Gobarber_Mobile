@@ -7,11 +7,12 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 
+import { launchImageLibrary } from 'react-native-image-picker';
 import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
 
@@ -31,7 +32,6 @@ interface ProfileFormData {
 const Profile: React.FC = () => {
   const { user } = useAuth();
   const formRef = useRef<FormHandles>(null);
-  const navigation = useNavigation();
 
   const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
@@ -88,6 +88,34 @@ const Profile: React.FC = () => {
     }
   }, []);
 
+  const handleUpdateAvatar = useCallback(() => {
+    console.log('handleUpdateAvatar');
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        selectionLimit: 1,
+      },
+      (response) => {
+        console.log('Response = ', response);
+
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.errorCode) {
+          console.log('ImagePicker Error: ', response.errorCode);
+        } else if (response.errorMessage) {
+          console.log('User tapped custom button: ', response.errorMessage);
+        } else {
+          const source = { uri: response.assets };
+
+          console.log('source', source);
+
+          // You can also display the image using data:
+          // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+        }
+      },
+    );
+  }, []);
+
   return (
     <>
       <KeyboardAvoidingView
@@ -106,7 +134,11 @@ const Profile: React.FC = () => {
               <Title>Atualizar perfil</Title>
             </View>
 
-            <Form initialData={user} ref={formRef} onSubmit={handleSaveProfile}>
+            <Form
+              initialData={user}
+              ref={formRef}
+              onSubmit={handleUpdateAvatar}
+            >
               <Input
                 autoCapitalize="words"
                 name="name"
