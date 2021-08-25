@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import { format, isBefore } from 'date-fns';
-import { Alert } from 'react-native';
 import Calendars from '../../components/Calendar';
 import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
 import api from '../../services/api';
@@ -227,24 +226,27 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
   }, []);
 
   const handleCreateAppointment = useCallback(async () => {
-    try {
-      const date = new Date(selectedDate.timestamp);
+    const date = new Date(selectedDate.timestamp);
 
-      date.setDate(selectedDate.day);
-      date.setHours(selectedHour);
-      date.setMinutes(0);
+    date.setDate(selectedDate.day);
+    date.setHours(selectedHour);
+    date.setMinutes(0);
 
-      await api.post('appointments', {
-        provider_id: selectedProvider,
-        dateAppointment: date,
-      });
-      navigation.navigate('AppointmentCreated', {
-        date: date.getTime(),
-      });
-    } catch (err) {
-      Alert.alert('Erro ao criar agendamento', `${err.response.data.message}`);
-    }
-  }, [selectedProvider, selectedDate, selectedHour, navigation]);
+    const findProdiver = providers.find(
+      (provider) => provider.id === selectedProvider,
+    );
+
+    const provider = {
+      id: findProdiver?.id as string,
+      name: findProdiver?.name as string,
+      avatar_url: findProdiver?.avatar_url as string,
+    };
+
+    navigation.navigate('AppointmentConfirmation', {
+      date,
+      provider,
+    });
+  }, [selectedProvider, selectedDate, selectedHour, navigation, providers]);
 
   const morningAvailability = useMemo(() => {
     return availability

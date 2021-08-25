@@ -6,6 +6,14 @@ type StackParamList = {
   Dashboard: undefined;
   Profile: undefined;
   AppointmentDatePicker: { providerId: string };
+  AppointmentConfirmation: {
+    date: Date;
+    provider: {
+      id: string;
+      name: string;
+      avatar_url: string;
+    };
+  };
   AppointmentCreated: { date: Number };
 };
 

@@ -5,6 +5,7 @@ import Dashboard from '../pages/Dashboard';
 import Profile from '../pages/Profile';
 import AppointmentDatePicker from '../pages/AppointmentDatePicker';
 import AppointmentCreated from '../pages/AppointmentCreated';
+import AppointmentConfirmation from '../pages/AppointmentConfirmation';
 
 const App = createNativeStackNavigator();
 
@@ -20,6 +21,10 @@ const AppRoutes: React.FC = () => (
     <App.Screen
       name="AppointmentDatePicker"
       component={AppointmentDatePicker}
+    />
+    <App.Screen
+      name="AppointmentConfirmation"
+      component={AppointmentConfirmation}
     />
     <App.Screen name="AppointmentCreated" component={AppointmentCreated} />
   </App.Navigator>
