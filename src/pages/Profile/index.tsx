@@ -167,7 +167,7 @@ const Profile: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
         });
       },
     );
-  }, [user]);
+  }, [user, updateUser]);
 
   return (
     <>
