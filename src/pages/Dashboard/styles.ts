@@ -29,7 +29,13 @@ export const UserName = styled.Text`
   font-family: 'RobotoSlab-Medium';
 `;
 
-export const ProfileButton = styled.TouchableOpacity``;
+export const ProfileButton = styled.TouchableOpacity`
+  border-width: 1px;
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  border-color: #3e3b47;
+`;
 
 export const UserAvatar = styled.Image`
   width: 56px;

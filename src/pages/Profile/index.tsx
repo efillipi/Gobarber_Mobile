@@ -12,25 +12,43 @@ import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 
-import { launchImageLibrary } from 'react-native-image-picker';
+import {
+  launchImageLibrary,
+  ImagePickerResponse,
+} from 'react-native-image-picker';
+import Icon from 'react-native-vector-icons/Feather';
 import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
+import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
-import { Container, Title, Avatar } from './styles';
+import {
+  Container,
+  BackButtonContainer,
+  BackButton,
+  SignOutButton,
+  SignOutContainer,
+  Title,
+  Avatar,
+  UserAvatarButton,
+  AvatarButton,
+  IconConainter,
+} from './styles';
 
 interface ProfileFormData {
   name: string;
   email: string;
+  old_password: string;
   password: string;
+  password_confirmation: string;
 }
 
-const Profile: React.FC = () => {
-  const { user } = useAuth();
+const Profile: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
+  const { user, signOut, updateUser } = useAuth();
   const formRef = useRef<FormHandles>(null);
 
   const emailInputRef = useRef<TextInput>(null);
@@ -38,83 +56,118 @@ const Profile: React.FC = () => {
   const newPasswordInputRef = useRef<TextInput>(null);
   const confirmPasswordInputRef = useRef<TextInput>(null);
 
-  const handleSaveProfile = useCallback(async (data: ProfileFormData) => {
-    try {
-      formRef.current?.setErrors({});
+  const handleSaveProfile = useCallback(
+    async (data: ProfileFormData) => {
+      try {
+        formRef.current?.setErrors({});
 
-      const schema = Yup.object().shape({
-        name: Yup.string().required('Nome obrigatório'),
-        email: Yup.string()
-          .required('E-mail obrigatório')
-          .email('Digite um e-mail válido'),
-        old_password: Yup.string(),
-        password: Yup.string().when('old_password', {
-          is: (val: any) => !!val.length,
-          then: Yup.string().required('Campo obrigatório'),
-          otherwise: Yup.string(),
-        }),
-        password_confirmation: Yup.string()
-          .when('old_password', {
+        const schema = Yup.object().shape({
+          name: Yup.string().required('Nome obrigatório'),
+          email: Yup.string()
+            .required('E-mail obrigatório')
+            .email('Digite um e-mail válido'),
+          old_password: Yup.string(),
+          password: Yup.string().when('old_password', {
             is: (val: any) => !!val.length,
             then: Yup.string().required('Campo obrigatório'),
             otherwise: Yup.string(),
-          })
-          .oneOf([Yup.ref('password'), null], 'Confirmação incorreta'),
-      });
+          }),
+          password_confirmation: Yup.string()
+            .when('old_password', {
+              is: (val: any) => !!val.length,
+              then: Yup.string().required('Campo obrigatório'),
+              otherwise: Yup.string(),
+            })
+            .oneOf([Yup.ref('password'), null], 'Confirmação incorreta'),
+        });
 
-      await schema.validate(data, {
-        abortEarly: false,
-      });
+        await schema.validate(data, {
+          abortEarly: false,
+        });
 
-      console.log(data);
+        const { name, email, old_password, password, password_confirmation } =
+          data;
 
-      Alert.alert(
-        'Perfil atualizado com sucesso!',
-        'As informações do perfil foram atualizadas.',
-      );
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidationErrors(err);
+        const formData = {
+          name,
+          email,
+          ...(old_password
+            ? {
+                old_password,
+                password,
+                password_confirmation,
+              }
+            : {}),
+        };
 
-        formRef.current?.setErrors(errors);
+        await api.put('/profile', formData).then((Apiresponse) => {
+          updateUser(Apiresponse.data);
+        });
 
-        return;
+        Alert.alert(
+          'Perfil atualizado com sucesso!',
+          'As informações do perfil foram atualizadas.',
+        );
+
+        navigation.goBack();
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+
+          formRef.current?.setErrors(errors);
+
+          return;
+        }
+
+        Alert.alert(
+          'Erro no cadastro',
+          'Ocorreu um erro ao fazer cadastro, tente novamente.',
+        );
       }
-
-      Alert.alert(
-        'Erro no cadastro',
-        'Ocorreu um erro ao fazer cadastro, tente novamente.',
-      );
-    }
-  }, []);
+    },
+    [navigation],
+  );
 
   const handleUpdateAvatar = useCallback(() => {
-    console.log('handleUpdateAvatar');
     launchImageLibrary(
       {
         mediaType: 'photo',
         selectionLimit: 1,
+        quality: 0.7,
+        maxHeight: 500,
+        maxWidth: 500,
       },
-      (response) => {
-        console.log('Response = ', response);
-
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        } else if (response.errorCode) {
-          console.log('ImagePicker Error: ', response.errorCode);
-        } else if (response.errorMessage) {
-          console.log('User tapped custom button: ', response.errorMessage);
-        } else {
-          const source = { uri: response.assets };
-
-          console.log('source', source);
-
-          // You can also display the image using data:
-          // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+      (response: ImagePickerResponse) => {
+        if (response?.didCancel) {
+          return;
         }
+        if (response?.errorCode) {
+          return;
+        }
+        if (response?.errorMessage) {
+          return;
+        }
+
+        if (!response.assets) {
+          return;
+        }
+
+        const source = response?.assets;
+
+        const data = new FormData();
+
+        data.append('avatar', {
+          type: 'image/jpeg',
+          name: `${user.id}.jpeg`,
+          uri: source[0].uri,
+        });
+
+        api.patch('users/avatar', data).then((Apiresponse) => {
+          updateUser(Apiresponse.data);
+        });
       },
     );
-  }, []);
+  }, [user]);
 
   return (
     <>
@@ -128,17 +181,30 @@ const Profile: React.FC = () => {
           contentContainerStyle={{ flex: 1 }}
         >
           <Container>
-            <Avatar source={{ uri: user.avatar_url }} />
+            <BackButton onPress={() => navigation.goBack()}>
+              <BackButtonContainer>
+                <Icon name="chevron-left" size={24} color="#999591" />
+              </BackButtonContainer>
+            </BackButton>
+
+            <SignOutButton onPress={() => signOut()}>
+              <SignOutContainer>
+                <Icon name="power" size={24} color="#999591" />
+              </SignOutContainer>
+            </SignOutButton>
+
+            <UserAvatarButton>
+              <Avatar source={{ uri: user.avatar_url }} />
+              <IconConainter onPress={handleUpdateAvatar}>
+                <AvatarButton name="camera" size={24} color="#ff9000" />
+              </IconConainter>
+            </UserAvatarButton>
 
             <View>
               <Title>Atualizar perfil</Title>
             </View>
 
-            <Form
-              initialData={user}
-              ref={formRef}
-              onSubmit={handleUpdateAvatar}
-            >
+            <Form initialData={user} ref={formRef} onSubmit={handleSaveProfile}>
               <Input
                 autoCapitalize="words"
                 name="name"
