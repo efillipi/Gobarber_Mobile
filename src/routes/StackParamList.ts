@@ -7,14 +7,14 @@ type StackParamList = {
   Profile: undefined;
   AppointmentDatePicker: { providerId: string };
   AppointmentConfirmation: {
-    date: Date;
+    date: number;
     provider: {
       id: string;
       name: string;
       avatar_url: string;
     };
   };
-  AppointmentCreated: { date: Number };
+  AppointmentCreated: { date: number };
 };
 
 export type ProfileScreenNavigationProp =

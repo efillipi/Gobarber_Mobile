@@ -19,7 +19,7 @@ import {
 } from './styles';
 
 interface RouteParams {
-  date: Date;
+  date: number;
   provider: {
     id: string;
     name: string;
@@ -45,14 +45,17 @@ const AppointmentConfirmation: React.FC<ProfileScreenNavigationProp> = ({
         provider_id: provider.id,
         dateAppointment: date,
       });
-      navigation.navigate('AppointmentCreated', {
-        date: date.getTime(),
-      });
-    } catch (err) {
-      Alert.alert('Erro ao criar agendamento', `${err.response.data.message}`);
-    }
 
-    navigation.goBack();
+      navigation.navigate('AppointmentCreated', {
+        date,
+      });
+    } catch (error) {
+      Alert.alert(
+        'Erro ao criar agendamento',
+        `${error.response.data.message}`,
+      );
+      navigation.goBack();
+    }
   }, [navigation, date, provider.id]);
 
   const handleCancel = useCallback(async () => {

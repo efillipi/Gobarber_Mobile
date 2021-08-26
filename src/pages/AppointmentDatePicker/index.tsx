@@ -243,7 +243,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
     };
 
     navigation.navigate('AppointmentConfirmation', {
-      date,
+      date: date.getTime(),
       provider,
     });
   }, [selectedProvider, selectedDate, selectedHour, navigation, providers]);
