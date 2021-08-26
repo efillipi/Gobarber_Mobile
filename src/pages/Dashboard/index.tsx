@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
-
+import { isToday, format, parseISO, isAfter } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
 import {
@@ -10,40 +11,51 @@ import {
   UserName,
   ProfileButton,
   UserAvatar,
-  ProvidersList,
-  ProvidersListTitle,
-  ProviderContainer,
-  ProviderAvatar,
-  ProviderInfo,
-  ProviderName,
-  ProviderMeta,
-  ProviderMetaText,
+  AppointmentsList,
+  AppointmentsListTitle,
+  AppointmentContainer,
+  AppointmentAvatar,
+  AppointmentInfo,
+  AppointmentName,
+  AppointmentMeta,
+  AppointmentMetaText,
 } from './styles';
 
 import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
 
-export interface Provider {
+interface Appointment {
   id: string;
-  name: string;
-  avatar_url: string;
+  dateAppointment: string;
+  hourFormatted: string;
+  user: {
+    name: string;
+    avatar_url: string;
+  };
 }
 
 const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
   const { user } = useAuth();
-  const [providers, setProviders] = useState<Provider[]>([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
 
   useEffect(() => {
-    api.get('providers').then((response) => {
-      setProviders(response.data);
-    });
-  }, []);
+    api
+      .get<Appointment[]>('/appointments/me', {
+        params: {
+          year: selectedDate.getFullYear(),
+          month: selectedDate.getMonth() + 1,
+          day: selectedDate.getDate(),
+        },
+      })
+      .then((response) => {
+        const appointmentsFormatted = response.data.map((appointment) => ({
+          ...appointment,
+          hourFormatted: format(parseISO(appointment.dateAppointment), 'HH:mm'),
+        }));
 
-  const handleSelectProvider = useCallback(
-    (providerId: string) => {
-      navigation.navigate('AppointmentDatePicker', { providerId });
-    },
-    [navigation],
-  );
+        setAppointments(appointmentsFormatted);
+      });
+  }, []);
 
   return (
     <Container>
@@ -58,28 +70,19 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
         </ProfileButton>
       </Header>
 
-      <ProvidersList
-        data={providers}
-        keyExtractor={(provider) => provider.id}
+      <AppointmentsList
+        data={appointments}
+        keyExtractor={(appointment) => appointment.id}
         ListHeaderComponent={
-          <ProvidersListTitle>Cabelereiros</ProvidersListTitle>
+          <AppointmentsListTitle>Agendamento a seguir</AppointmentsListTitle>
         }
-        renderItem={({ item: provider }) => (
-          <ProviderContainer onPress={() => handleSelectProvider(provider.id)}>
-            <ProviderAvatar source={{ uri: provider.avatar_url }} />
-
-            <ProviderInfo>
-              <ProviderName>{provider.name}</ProviderName>
-              <ProviderMeta>
-                <Icon name="calendar" size={14} color="#ff9000" />
-                <ProviderMetaText>Segunda à sexta</ProviderMetaText>
-              </ProviderMeta>
-              <ProviderMeta>
-                <Icon name="clock" size={14} color="#ff9000" />
-                <ProviderMetaText>8h às 18h</ProviderMetaText>
-              </ProviderMeta>
-            </ProviderInfo>
-          </ProviderContainer>
+        renderItem={({ item: appointment }) => (
+          <AppointmentContainer onPress={() => console.log(appointment.id)}>
+            <AppointmentAvatar source={{ uri: appointment.user.avatar_url }} />
+            <AppointmentInfo>
+              <AppointmentName>{appointment.user.name}</AppointmentName>
+            </AppointmentInfo>
+          </AppointmentContainer>
         )}
       />
     </Container>
