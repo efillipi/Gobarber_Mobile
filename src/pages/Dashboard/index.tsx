@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
-import { isToday, format, parseISO, isAfter } from 'date-fns';
-import ptBR from 'date-fns/locale/pt-BR';
+import { format, parseISO } from 'date-fns';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
 import {
@@ -23,10 +22,11 @@ import {
 
 import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
 
-interface Appointment {
+export interface Appointment {
   id: string;
   dateAppointment: string;
-  hourFormatted: string;
+  hourFormatted: Date;
+  hour: string;
   user: {
     name: string;
     avatar_url: string;
@@ -50,12 +50,13 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
       .then((response) => {
         const appointmentsFormatted = response.data.map((appointment) => ({
           ...appointment,
-          hourFormatted: format(parseISO(appointment.dateAppointment), 'HH:mm'),
+          hourFormatted: parseISO(appointment.dateAppointment),
+          hour: format(parseISO(appointment.dateAppointment), 'HH:mm'),
         }));
 
         setAppointments(appointmentsFormatted);
       });
-  }, []);
+  }, [selectedDate]);
 
   return (
     <Container>
@@ -74,13 +75,18 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
         data={appointments}
         keyExtractor={(appointment) => appointment.id}
         ListHeaderComponent={
-          <AppointmentsListTitle>Agendamento a seguir</AppointmentsListTitle>
+          <AppointmentsListTitle>Horários agendados</AppointmentsListTitle>
         }
         renderItem={({ item: appointment }) => (
-          <AppointmentContainer onPress={() => console.log(appointment.id)}>
+          <AppointmentContainer onPress={() => console.log(appointment)}>
             <AppointmentAvatar source={{ uri: appointment.user.avatar_url }} />
+
             <AppointmentInfo>
               <AppointmentName>{appointment.user.name}</AppointmentName>
+              <AppointmentMeta>
+                <Icon name="clock" size={14} color="#ff9000" />
+                <AppointmentMetaText>{appointment.hour}</AppointmentMetaText>
+              </AppointmentMeta>
             </AppointmentInfo>
           </AppointmentContainer>
         )}
