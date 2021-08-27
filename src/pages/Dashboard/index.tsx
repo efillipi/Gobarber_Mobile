@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
-import { format, parseISO, isAfter, isToday } from 'date-fns';
+import { format, parseISO, isAfter, isToday, addDays } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
@@ -16,8 +16,10 @@ import {
   SectionTitle,
   SectionSubTitle,
   SectionContent,
+  TitleContainer,
   Title,
   Description,
+  ButtonContainer,
   NextAppointmentContainer,
   NextAppointment,
   AppointmentContainer,
@@ -45,6 +47,7 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
   const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+
   const selectedDateAsText = useMemo(() => {
     return format(selectedDate, "'Dia' dd 'de' MMMM ", {
       locale: ptBR,
@@ -99,6 +102,16 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
     );
   }, [appointments]);
 
+  const handleNextDay = useCallback(async () => {
+    const nextDay = addDays(selectedDate, 1);
+    setSelectedDate(nextDay);
+  }, [selectedDate]);
+
+  const handleBackDay = useCallback(async () => {
+    const backDay = addDays(selectedDate, -1);
+    setSelectedDate(backDay);
+  }, [selectedDate]);
+
   return (
     <Container>
       <Header>
@@ -112,12 +125,19 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
         </ProfileButton>
       </Header>
 
-      <Title>
-        Horários agendados {'\n'}
-        <Description>{selectedDateAsText}</Description>
-        <Description>{selectedWeekDay}</Description>
-      </Title>
-
+      <TitleContainer>
+        <ButtonContainer onPress={handleBackDay}>
+          <Icon name="chevron-left" size={24} color="#ff9000" />
+        </ButtonContainer>
+        <Title>
+          Horários agendados {'\n'}
+          <Description>{selectedDateAsText}</Description>
+          <Description>{selectedWeekDay}</Description>
+        </Title>
+        <ButtonContainer onPress={handleNextDay}>
+          <Icon name="chevron-right" size={24} color="#ff9000" />
+        </ButtonContainer>
+      </TitleContainer>
       {isToday(selectedDate) && nextAppointment && (
         <NextAppointmentContainer>
           <SectionTitle>Agendamento a seguir </SectionTitle>

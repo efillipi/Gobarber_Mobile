@@ -15,6 +15,7 @@ export const Header = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  margin: 0 0 24px;
 `;
 
 export const HeaderTitle = styled.Text`
@@ -42,17 +43,40 @@ export const UserAvatar = styled.Image`
   height: 56px;
   border-radius: 28px;
 `;
+
+export const TitleContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+`;
+
 export const Title = styled.Text`
   font-family: 'RobotoSlab-Medium';
   color: #f4ede8;
   font-size: 24px;
-  margin: 24px;
+`;
+
+export const ButtonContainer = styled.TouchableOpacity`
+  justify-content: center;
+  height: 50px;
 `;
 
 export const Description = styled.Text`
   font-family: 'RobotoSlab-Medium';
   color: #ff9000;
   font-size: 24px;
+`;
+
+export const NextAppointmentContainer = styled.View`
+  margin: 0 0 12px;
+`;
+
+export const NextAppointment = styled.TouchableOpacity`
+  flex-direction: row;
+  justify-content: center;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  margin: 0 24px 10px;
 `;
 
 export const Schedule = styled.ScrollView.attrs({
@@ -67,7 +91,7 @@ export const SectionTitle = styled.Text`
   font-size: 24px;
   color: #999591;
   font-family: 'RobotoSlab-Regular';
-  margin: 0 24px 24px;
+  margin: 24px 24px;
 `;
 
 export const SectionSubTitle = styled.Text`
@@ -79,16 +103,6 @@ export const SectionSubTitle = styled.Text`
 
 export const SectionContent = styled.View`
   margin: 0 24px 0px;
-`;
-
-export const NextAppointmentContainer = styled.View``;
-
-export const NextAppointment = styled.TouchableOpacity`
-  flex-direction: row;
-  justify-content: center;
-  margin-bottom: 16px;
-  border-radius: 10px;
-  margin: 0 24px 10px;
 `;
 
 export const AppointmentContainer = styled.TouchableOpacity`
