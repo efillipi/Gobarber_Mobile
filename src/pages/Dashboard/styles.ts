@@ -3,6 +3,7 @@ import {
   getStatusBarHeight,
   getBottomSpace,
 } from 'react-native-iphone-x-helper';
+import { Platform } from 'react-native';
 
 export const Container = styled.View`
   flex: 1;
@@ -53,7 +54,7 @@ export const TitleContainer = styled.View`
 export const Title = styled.Text`
   font-family: 'RobotoSlab-Medium';
   color: #f4ede8;
-  font-size: 24px;
+  font-size: ${Platform.OS === 'android' ? 24 : 18}px;
 `;
 
 export const ButtonContainer = styled.TouchableOpacity`
@@ -64,7 +65,6 @@ export const ButtonContainer = styled.TouchableOpacity`
 export const Description = styled.Text`
   font-family: 'RobotoSlab-Medium';
   color: #ff9000;
-  font-size: 24px;
 `;
 
 export const NextAppointmentContainer = styled.View`
