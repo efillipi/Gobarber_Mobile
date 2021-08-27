@@ -70,9 +70,18 @@ export const SectionTitle = styled.Text`
   margin: 0 24px 24px;
 `;
 
+export const SectionSubTitle = styled.Text`
+  font-size: 18px;
+  color: #999591;
+  font-family: 'RobotoSlab-Regular';
+  margin: 0 24px 24px;
+`;
+
 export const SectionContent = styled.View`
   margin: 0 24px 0px;
 `;
+
+export const NextAppointmentContainer = styled.View``;
 
 export const NextAppointment = styled.TouchableOpacity`
   flex-direction: row;

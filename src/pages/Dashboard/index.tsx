@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
-import { format, parseISO, isAfter } from 'date-fns';
+import { format, parseISO, isAfter, isToday } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
@@ -14,9 +14,11 @@ import {
   Schedule,
   Section,
   SectionTitle,
+  SectionSubTitle,
   SectionContent,
   Title,
   Description,
+  NextAppointmentContainer,
   NextAppointment,
   AppointmentContainer,
   AppointmentAvatar,
@@ -116,25 +118,33 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
         <Description>{selectedWeekDay}</Description>
       </Title>
 
-      <SectionTitle>Agendamento a seguir </SectionTitle>
-      <NextAppointment onPress={() => console.log(nextAppointment)}>
-        <AppointmentMeta>
-          <Icon name="clock" size={14} color="#ff9000" />
-          <AppointmentMetaText>{nextAppointment?.hour}</AppointmentMetaText>
-        </AppointmentMeta>
+      {isToday(selectedDate) && nextAppointment && (
+        <NextAppointmentContainer>
+          <SectionTitle>Agendamento a seguir </SectionTitle>
 
-        <AppointmentInfo>
-          <AppointmentAvatar
-            source={{ uri: nextAppointment?.user.avatar_url }}
-          />
-          <AppointmentName>{nextAppointment?.user.name}</AppointmentName>
-        </AppointmentInfo>
-      </NextAppointment>
+          <NextAppointment onPress={() => console.log(nextAppointment)}>
+            <AppointmentMeta>
+              <Icon name="clock" size={14} color="#ff9000" />
+              <AppointmentMetaText>{nextAppointment?.hour}</AppointmentMetaText>
+            </AppointmentMeta>
+
+            <AppointmentInfo>
+              <AppointmentAvatar
+                source={{ uri: nextAppointment?.user.avatar_url }}
+              />
+              <AppointmentName>{nextAppointment?.user.name}</AppointmentName>
+            </AppointmentInfo>
+          </NextAppointment>
+        </NextAppointmentContainer>
+      )}
 
       <Schedule>
         <Section>
           <SectionTitle>Manhã</SectionTitle>
 
+          {morningAvailability.length === 0 && (
+            <SectionSubTitle>Nenhum agendamento neste período</SectionSubTitle>
+          )}
           <SectionContent>
             {morningAvailability.map((appointment) => (
               <AppointmentContainer
@@ -159,6 +169,9 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
 
         <Section>
           <SectionTitle>Tarde</SectionTitle>
+          {afternoonAvailability.length === 0 && (
+            <SectionSubTitle>Nenhum agendamento neste período</SectionSubTitle>
+          )}
           <SectionContent>
             {afternoonAvailability.map((appointment) => (
               <AppointmentContainer
