@@ -71,6 +71,10 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
           hour: format(parseISO(appointment.dateAppointment), 'HH:mm'),
         }));
 
+        appointmentsFormatted.sort((a, b) => {
+          return a.hour < b.hour ? -1 : 1;
+        });
+
         setAppointments(appointmentsFormatted);
       });
   }, [selectedDate]);
