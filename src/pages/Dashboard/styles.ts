@@ -1,9 +1,5 @@
 import styled from 'styled-components/native';
-import {
-  getStatusBarHeight,
-  getBottomSpace,
-} from 'react-native-iphone-x-helper';
-import { Platform } from 'react-native';
+import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 
 export const Container = styled.View`
   flex: 1;
@@ -45,107 +41,24 @@ export const UserAvatar = styled.Image`
   border-radius: 28px;
 `;
 
-export const TitleContainer = styled.View`
+export const ButtonContainer = styled.View`
+  width: 100%;
   flex-direction: row;
   justify-content: space-around;
+`;
+
+export const OkButton = styled.TouchableOpacity`
+  width: 40%;
+  padding: 12px 24px;
+  background: #ff9000;
+  justify-content: center;
   align-items: center;
-`;
-
-export const Title = styled.Text`
-  font-family: 'RobotoSlab-Medium';
-  color: #f4ede8;
-  font-size: ${Platform.OS === 'android' ? 24 : 18}px;
-`;
-
-export const ButtonContainer = styled.TouchableOpacity`
-  justify-content: center;
-  height: 50px;
-`;
-
-export const Description = styled.Text`
-  font-family: 'RobotoSlab-Medium';
-  color: #ff9000;
-`;
-
-export const NextAppointmentContainer = styled.View`
-  margin: 0 0 12px;
-`;
-
-export const NextAppointment = styled.TouchableOpacity`
-  flex-direction: row;
-  justify-content: center;
-  margin-bottom: 16px;
   border-radius: 10px;
-  margin: 0 24px 10px;
+  margin-top: 24px;
 `;
 
-export const Schedule = styled.ScrollView.attrs({
-  contentContainerStyle: {
-    paddingBottom: getBottomSpace(),
-  },
-})``;
-
-export const Section = styled.View``;
-
-export const SectionTitle = styled.Text`
-  font-size: 24px;
-  color: #999591;
-  font-family: 'RobotoSlab-Regular';
-  margin: 24px 24px;
-`;
-
-export const SectionSubTitle = styled.Text`
-  font-size: 18px;
-  color: #999591;
-  font-family: 'RobotoSlab-Regular';
-  margin: 0 24px 24px;
-`;
-
-export const SectionContent = styled.View`
-  margin: 0 24px 0px;
-`;
-
-export const AppointmentContainer = styled.TouchableOpacity`
-  flex-direction: row;
-  justify-content: center;
-  margin-bottom: 16px;
-  border-radius: 10px;
-`;
-
-export const AppointmentInfo = styled.View`
-  flex: 1;
-  padding: 10px;
-  height: 100%;
-  background: #3e3b47;
-  margin-bottom: 16px;
-  border-radius: 10px;
-  margin-left: 20px;
-  flex-direction: row;
-  align-items: center;
-`;
-
-export const AppointmentAvatar = styled.Image`
-  width: 72px;
-  height: 72px;
-  border-radius: 36px;
-  margin: 0 12px;
-`;
-
-export const AppointmentName = styled.Text`
+export const ButtonText = styled.Text`
+  color: #fff;
   font-family: 'RobotoSlab-Medium';
   font-size: 18px;
-  color: #f4ede8;
-`;
-
-export const AppointmentMeta = styled.View`
-  align-items: center;
-  flex-direction: row;
-  justify-content: center;
-`;
-
-export const AppointmentMetaText = styled.Text`
-  margin-left: 8px;
-  color: #f4ede8;
-  font-size: 18px;
-  font-family: 'RobotoSlab-Regular';
 `;
