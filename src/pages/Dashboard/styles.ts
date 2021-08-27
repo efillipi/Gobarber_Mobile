@@ -1,8 +1,8 @@
 import styled from 'styled-components/native';
-import { getStatusBarHeight } from 'react-native-iphone-x-helper';
-import { FlatList } from 'react-native';
-
-import { Appointment } from '.';
+import {
+  getStatusBarHeight,
+  getBottomSpace,
+} from 'react-native-iphone-x-helper';
 
 export const Container = styled.View`
   flex: 1;
@@ -42,42 +42,70 @@ export const UserAvatar = styled.Image`
   height: 56px;
   border-radius: 28px;
 `;
-
-export const AppointmentsList = styled(
-  FlatList as new () => FlatList<Appointment>,
-).attrs({
-  contentContainerStyle: {
-    paddingTop: 32,
-    paddingBottom: 16,
-    paddingHorizontal: 24,
-  },
-})``;
-
-export const AppointmentsListTitle = styled.Text`
+export const Title = styled.Text`
   font-family: 'RobotoSlab-Medium';
   color: #f4ede8;
   font-size: 24px;
-  margin-bottom: 24px;
+  margin: 24px;
+`;
+
+export const Description = styled.Text`
+  font-family: 'RobotoSlab-Medium';
+  color: #ff9000;
+  font-size: 24px;
+`;
+
+export const Schedule = styled.ScrollView.attrs({
+  contentContainerStyle: {
+    paddingBottom: getBottomSpace(),
+  },
+})``;
+
+export const Section = styled.View``;
+
+export const SectionTitle = styled.Text`
+  font-size: 24px;
+  color: #999591;
+  font-family: 'RobotoSlab-Regular';
+  margin: 0 24px 24px;
+`;
+
+export const SectionContent = styled.View`
+  margin: 0 24px 0px;
+`;
+
+export const NextAppointment = styled.TouchableOpacity`
+  flex-direction: row;
+  justify-content: center;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  margin: 0 24px 10px;
 `;
 
 export const AppointmentContainer = styled.TouchableOpacity`
   flex-direction: row;
-  align-items: center;
-  padding: 20px;
+  justify-content: center;
   margin-bottom: 16px;
-  background: #3e3b47;
   border-radius: 10px;
+`;
+
+export const AppointmentInfo = styled.View`
+  flex: 1;
+  padding: 10px;
+  height: 100%;
+  background: #3e3b47;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  margin-left: 20px;
+  flex-direction: row;
+  align-items: center;
 `;
 
 export const AppointmentAvatar = styled.Image`
   width: 72px;
   height: 72px;
   border-radius: 36px;
-`;
-
-export const AppointmentInfo = styled.View`
-  flex: 1;
-  margin-left: 20px;
+  margin: 0 12px;
 `;
 
 export const AppointmentName = styled.Text`
@@ -87,13 +115,14 @@ export const AppointmentName = styled.Text`
 `;
 
 export const AppointmentMeta = styled.View`
-  flex-direction: row;
   align-items: center;
-  margin-top: 8px;
+  flex-direction: row;
+  justify-content: center;
 `;
 
 export const AppointmentMetaText = styled.Text`
   margin-left: 8px;
-  color: #999591;
+  color: #f4ede8;
+  font-size: 18px;
   font-family: 'RobotoSlab-Regular';
 `;

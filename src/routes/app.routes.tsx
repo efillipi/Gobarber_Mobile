@@ -2,6 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import Dashboard from '../pages/Dashboard';
+// import Dashboard from '../pages/Dashboard/users';
 import Profile from '../pages/Profile';
 import AppointmentDatePicker from '../pages/AppointmentDatePicker';
 import AppointmentCreated from '../pages/AppointmentCreated';
