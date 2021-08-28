@@ -16,7 +16,7 @@ export const Header = styled.View`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin: 0 0 24px;
+  margin: 0 0 12px;
 `;
 
 export const HeaderTitle = styled.Text`
@@ -45,25 +45,33 @@ export const UserAvatar = styled.Image`
   border-radius: 28px;
 `;
 
-export const TitleContainer = styled.View`
+export const Title = styled.View`
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
+  margin: 0 24px 12px;
 `;
 
-export const Title = styled.Text`
+export const TitleContainer = styled.Text`
   font-family: 'RobotoSlab-Medium';
   color: #f4ede8;
   font-size: ${Platform.OS === 'android' ? 24 : 18}px;
 `;
 
-export const ButtonContainer = styled.TouchableOpacity`
+export const TitleButton = styled.TouchableOpacity`
   justify-content: center;
-  height: 50px;
+`;
+export const NetxButton = styled.TouchableOpacity`
+  justify-content: center;
 `;
 
-export const Description = styled.Text`
-  font-family: 'RobotoSlab-Medium';
+export const BackButton = styled.TouchableOpacity`
+  justify-content: center;
+`;
+
+export const Description = styled.Text``;
+
+export const TitleInfo = styled.Text`
   color: #ff9000;
 `;
 
@@ -148,4 +156,13 @@ export const AppointmentMetaText = styled.Text`
   color: #f4ede8;
   font-size: 18px;
   font-family: 'RobotoSlab-Regular';
+`;
+
+export const ModalContainer = styled.View`
+  position: absolute;
+  top: 120px;
+  margin: 24px;
+  width: 350px;
+  justify-content: center;
+  /* border: 1px solid white; */
 `;

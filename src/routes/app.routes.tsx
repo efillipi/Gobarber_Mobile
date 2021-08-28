@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/auth';
 
 import DashboardProviders from '../pages/Dashboard/providers';
 import DashboardUsers from '../pages/Dashboard/users';
+import Test from '../pages/Dashboard';
 import Profile from '../pages/Profile';
 import AppointmentDatePicker from '../pages/AppointmentDatePicker';
 import AppointmentCreated from '../pages/AppointmentCreated';
@@ -45,6 +46,7 @@ const AppRoutesProvider: React.FC = () => (
     }}
   >
     <App.Screen name="Dashboard" component={DashboardProviders} />
+    <App.Screen name="Test" component={Test} />
     <App.Screen name="Profile" component={Profile} />
   </App.Navigator>
 );

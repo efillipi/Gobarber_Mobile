@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
+import { Alert, Modal, StyleSheet, Text, Pressable, View } from 'react-native';
 import { format, parseISO, isAfter, isToday, addDays } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
+import Calendars from '../../../components/Calendar';
 import api from '../../../services/api';
 import { useAuth } from '../../../hooks/auth';
 import {
@@ -19,7 +21,10 @@ import {
   TitleContainer,
   Title,
   Description,
-  ButtonContainer,
+  TitleInfo,
+  TitleButton,
+  NetxButton,
+  BackButton,
   NextAppointmentContainer,
   NextAppointment,
   AppointmentContainer,
@@ -28,6 +33,7 @@ import {
   AppointmentName,
   AppointmentMeta,
   AppointmentMetaText,
+  ModalContainer,
 } from './styles';
 
 import { ProfileScreenNavigationProp } from '../../../routes/StackParamList';
@@ -43,10 +49,19 @@ export interface Appointment {
   };
 }
 
+interface CalendarObjects {
+  day: number;
+  month: number;
+  year: number;
+  timestamp: number;
+  dateString: string;
+}
+
 const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
   const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const selectedDateAsText = useMemo(() => {
     return format(selectedDate, "'Dia' dd 'de' MMMM ", {
@@ -112,6 +127,11 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
     setSelectedDate(backDay);
   }, [selectedDate]);
 
+  const handleDateChange = useCallback((day: CalendarObjects) => {
+    const date = new Date(day.timestamp);
+    setSelectedDate(date);
+  }, []);
+
   return (
     <Container>
       <Header>
@@ -125,19 +145,49 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
         </ProfileButton>
       </Header>
 
-      <TitleContainer>
-        <ButtonContainer onPress={handleBackDay}>
+      <Title>
+        <NetxButton onPress={handleBackDay}>
           <Icon name="chevron-left" size={24} color="#ff9000" />
-        </ButtonContainer>
-        <Title>
-          Horários agendados {'\n'}
-          <Description>{selectedDateAsText}</Description>
-          <Description>{selectedWeekDay}</Description>
-        </Title>
-        <ButtonContainer onPress={handleNextDay}>
+        </NetxButton>
+
+        <TitleButton onPress={() => setModalVisible(true)}>
+          <TitleContainer>
+            <Description>Horários agendados {'\n'}</Description>
+            <TitleInfo>{selectedDateAsText}</TitleInfo>
+            <TitleInfo>{selectedWeekDay}</TitleInfo>
+          </TitleContainer>
+        </TitleButton>
+
+        <BackButton onPress={handleNextDay}>
           <Icon name="chevron-right" size={24} color="#ff9000" />
-        </ButtonContainer>
-      </TitleContainer>
+        </BackButton>
+      </Title>
+
+      <Modal
+        animationType="slide"
+        transparent
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <ModalContainer>
+          <Calendars
+            current={selectedDate}
+            onDayPress={(day) => {
+              handleDateChange(day);
+            }}
+            onMonthChange={(month) => {
+              handleDateChange(month);
+            }}
+          />
+          <Pressable onPress={() => setModalVisible(!modalVisible)}>
+            <Text>X</Text>
+          </Pressable>
+        </ModalContainer>
+      </Modal>
+
       {isToday(selectedDate) && nextAppointment && (
         <NextAppointmentContainer>
           <SectionTitle>Agendamento a seguir </SectionTitle>
