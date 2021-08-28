@@ -4,8 +4,6 @@ type StackParamList = {
   SignUp: undefined;
   SignIn: undefined;
   Dashboard: undefined;
-  DashboardProviders: undefined;
-  DashboardUsers: undefined;
   Profile: undefined;
   AppointmentDatePicker: { providerId: string };
   AppointmentConfirmation: {
