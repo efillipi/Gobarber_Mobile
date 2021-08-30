@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
-import { Alert, Modal, StyleSheet, Text, Pressable, View } from 'react-native';
+import { Modal } from 'react-native';
 import { format, parseISO, isAfter, isToday, addDays } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
+
 import Calendars from '../../../components/Calendar';
 import api from '../../../services/api';
 import { useAuth } from '../../../hooks/auth';
@@ -34,7 +35,15 @@ import {
   AppointmentMeta,
   AppointmentMetaText,
   ModalContainer,
+  ButtonExitModal,
 } from './styles';
+import {
+  selectedStyles,
+  availableDaysStyles,
+  daysOffStyles,
+  unavailableDaysStyles,
+  pastDaysStyles,
+} from '../../../utils/Calendar/styles';
 
 import { ProfileScreenNavigationProp } from '../../../routes/StackParamList';
 
@@ -57,11 +66,31 @@ interface CalendarObjects {
   dateString: string;
 }
 
+interface MonthAvailabilityItem {
+  day: number;
+  available: boolean;
+}
+
 const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
   const { user } = useAuth();
+
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [monthAvailability, setMonthAvailability] = useState<
+    MonthAvailabilityItem[]
+  >([]);
+  const [markedDate, setMarkedDate] = useState({});
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  const minimumDate = useMemo(() => {
+    const firstDate = selectedDate;
+    return {
+      dateString: `${firstDate.getFullYear()}-${String(
+        firstDate.getMonth() + 1,
+      ).padStart(2, '0')}-${firstDate.getDate()}`,
+    };
+  }, [selectedDate]);
 
   const selectedDateAsText = useMemo(() => {
     return format(selectedDate, "'Dia' dd 'de' MMMM ", {
@@ -133,6 +162,88 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
     setSelectedDate(date);
   }, []);
 
+  const handleMonthChange = useCallback((month: CalendarObjects) => {
+    const date = new Date(month.timestamp);
+    setCurrentMonth(date);
+  }, []);
+
+  useEffect(() => {
+    api
+      .get(`/providers/${user.id}/month-availability`, {
+        params: {
+          year: selectedDate.getFullYear(),
+          month: String(selectedDate.getMonth() + 1).padStart(2, '0'),
+        },
+      })
+      .then((response) => {
+        setMonthAvailability(response.data);
+      });
+  }, [selectedDate, user]);
+  useMemo(() => {
+    const daysOff: string[] = [];
+    const dayOffOne = 5;
+    const dayOffTwo = 6;
+    const unavailableDays = monthAvailability
+      .filter((monthDay) => monthDay.available === false)
+      .map((monthDay) => {
+        const year = currentMonth.getFullYear();
+        const month = String(currentMonth.getMonth() + 1).padStart(2, '0');
+        const day = String(monthDay.day).padStart(2, '0');
+        const data = `${year}-${month}-${day}`;
+        return data;
+      });
+
+    const availableDays = monthAvailability
+      .filter((monthDay) => monthDay.available === true)
+      .map((monthDay) => {
+        const year = currentMonth.getFullYear();
+        const month = String(currentMonth.getMonth() + 1).padStart(2, '0');
+        const day = String(monthDay.day).padStart(2, '0');
+        const data = `${year}-${month}-${day}`;
+        return data;
+      });
+
+    monthAvailability.forEach((monthDay) => {
+      const year = currentMonth.getFullYear();
+      const month = String(currentMonth.getMonth() + 1).padStart(2, '0');
+      const day = String(monthDay.day).padStart(2, '0');
+      const data = new Date(`${year}-${month}-${day}`);
+      if (data.getDay() === dayOffOne || data.getDay() === dayOffTwo) {
+        const data_data = `${year}-${month}-${day}`;
+        daysOff.push(data_data);
+      }
+    });
+
+    const unavailableDaysObjet = unavailableDays.reduce(
+      (objet: any, value: any) => {
+        objet[value] = unavailableDaysStyles;
+        return objet;
+      },
+      {},
+    );
+
+    const availableDaysObjet_unavailableDaysObjet = availableDays.reduce(
+      (objet: any, value: any) => {
+        objet[value] = availableDaysStyles;
+        return objet;
+      },
+      unavailableDaysObjet,
+    );
+
+    // availableDaysObjet_unavailableDaysObjet[selectedDate] =
+    //   selectedStyles;
+
+    const availableDaysObjet_unavailableDaysObjet_selectedObject_daysOffObjet =
+      daysOff.reduce((objet: any, value: any) => {
+        objet[value] = daysOffStyles;
+        return objet;
+      }, availableDaysObjet_unavailableDaysObjet);
+
+    setMarkedDate(
+      availableDaysObjet_unavailableDaysObjet_selectedObject_daysOffObjet,
+    );
+  }, [currentMonth, monthAvailability, selectedDate]);
+
   return (
     <Container>
       <Header>
@@ -147,9 +258,11 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
       </Header>
 
       <Title>
-        <NetxButton onPress={handleBackDay}>
-          <Icon name="chevron-left" size={24} color="#ff9000" />
-        </NetxButton>
+        {!modalVisible && (
+          <NetxButton onPress={handleBackDay}>
+            <Icon name="chevron-left" size={24} color="#ff9000" />
+          </NetxButton>
+        )}
 
         <TitleButton onPress={() => setModalVisible(true)}>
           <TitleContainer>
@@ -158,29 +271,29 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
             <TitleInfo>{selectedWeekDay}</TitleInfo>
           </TitleContainer>
         </TitleButton>
-
-        <BackButton onPress={handleNextDay}>
-          <Icon name="chevron-right" size={24} color="#ff9000" />
-        </BackButton>
+        {!modalVisible && (
+          <BackButton onPress={handleNextDay}>
+            <Icon name="chevron-right" size={24} color="#ff9000" />
+          </BackButton>
+        )}
       </Title>
 
-      <Modal
-        animationType="slide"
-        transparent
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-          setModalVisible(!modalVisible);
-        }}
-      >
+      <Modal animationType="slide" transparent visible={modalVisible}>
         <ModalContainer>
           <Calendars
             current={selectedDate}
             onDayPress={(day) => {
               handleDateChange(day);
-              setModalVisible(!modalVisible);
             }}
+            onMonthChange={(month) => {
+              handleMonthChange(month);
+            }}
+            markingType="custom"
+            markedDates={markedDate}
           />
+          <ButtonExitModal onPress={() => setModalVisible(!modalVisible)}>
+            <Icon name="x-circle" size={24} color="#ff9000" />
+          </ButtonExitModal>
         </ModalContainer>
       </Modal>
 

@@ -159,9 +159,12 @@ export const AppointmentMetaText = styled.Text`
 `;
 
 export const ModalContainer = styled.View`
-  position: absolute;
-  top: 150px;
-  margin: 0 0 24px;
-  width: 400px;
+  position: relative;
+  flex: 1;
   justify-content: center;
+  border: 1px solid green;
+`;
+
+export const ButtonExitModal = styled.TouchableOpacity`
+  position: absolute;
 `;
