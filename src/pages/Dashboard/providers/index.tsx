@@ -129,6 +129,7 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
 
   const handleDateChange = useCallback((day: CalendarObjects) => {
     const date = new Date(day.timestamp);
+    date.setDate(day.day);
     setSelectedDate(date);
   }, []);
 
@@ -177,14 +178,9 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
             current={selectedDate}
             onDayPress={(day) => {
               handleDateChange(day);
-            }}
-            onMonthChange={(month) => {
-              handleDateChange(month);
+              setModalVisible(!modalVisible);
             }}
           />
-          <Pressable onPress={() => setModalVisible(!modalVisible)}>
-            <Text>X</Text>
-          </Pressable>
         </ModalContainer>
       </Modal>
 

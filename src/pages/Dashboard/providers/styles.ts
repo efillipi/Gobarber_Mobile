@@ -160,9 +160,8 @@ export const AppointmentMetaText = styled.Text`
 
 export const ModalContainer = styled.View`
   position: absolute;
-  top: 120px;
-  margin: 24px;
-  width: 350px;
+  top: 150px;
+  margin: 0 0 24px;
+  width: 400px;
   justify-content: center;
-  /* border: 1px solid white; */
 `;
