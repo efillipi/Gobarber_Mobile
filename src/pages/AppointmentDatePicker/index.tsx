@@ -12,6 +12,7 @@ import {
   Header,
   BackButton,
   HeaderTitle,
+  ProfileButton,
   UserAvatar,
   ProvidersListContainer,
   ProvidersList,
@@ -189,9 +190,10 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
         <BackButton onPress={() => navigation.goBack()}>
           <Icon name="chevron-left" size={24} color="#999591" />
         </BackButton>
-        <HeaderTitle>Cabelereiros</HeaderTitle>
 
-        <UserAvatar source={{ uri: user.avatar_url }} />
+        <ProfileButton onPress={() => navigation.navigate('Profile')}>
+          <UserAvatar source={{ uri: user.avatar_url }} />
+        </ProfileButton>
       </Header>
       <Container>
         <ProvidersListContainer>

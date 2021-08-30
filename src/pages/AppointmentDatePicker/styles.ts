@@ -34,9 +34,9 @@ export const Header = styled.View`
   padding: 24px;
   padding-top: ${getStatusBarHeight() + 24}px;
   background: #28262e;
-
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
 `;
 
 export const BackButton = styled.TouchableOpacity``;
@@ -47,6 +47,14 @@ export const HeaderTitle = styled.Text`
   font-family: 'RobotoSlab-Medium';
   line-height: 28px;
   margin-left: 16px;
+`;
+
+export const ProfileButton = styled.TouchableOpacity`
+  border-width: 1px;
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  border-color: #3e3b47;
 `;
 
 export const UserAvatar = styled.Image`
