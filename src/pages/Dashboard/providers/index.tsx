@@ -187,7 +187,7 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
       </Header>
 
       <Title>
-        {modalVisible && (
+        {!modalVisible && (
           <NetxButton onPress={handleBackDay}>
             <Icon name="chevron-left" size={24} color="#ff9000" />
           </NetxButton>
@@ -200,13 +200,13 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
             <TitleInfo>{selectedWeekDay}</TitleInfo>
           </TitleContainer>
         </TitleButton>
-        {modalVisible && (
+        {!modalVisible && (
           <BackButton onPress={handleNextDay}>
             <Icon name="chevron-right" size={24} color="#ff9000" />
           </BackButton>
         )}
       </Title>
-      {!modalVisible && (
+      {modalVisible && (
         <Calendars
           current={currentMonth}
           onDayPress={(day) => {
