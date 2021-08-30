@@ -47,7 +47,7 @@ export const UserAvatar = styled.Image`
 
 export const Title = styled.View`
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   margin: 0 24px 12px;
 `;
@@ -60,6 +60,8 @@ export const TitleContainer = styled.Text`
 
 export const TitleButton = styled.TouchableOpacity`
   justify-content: center;
+
+  margin: 0 24px 0 24px;
 `;
 export const NetxButton = styled.TouchableOpacity`
   justify-content: center;
