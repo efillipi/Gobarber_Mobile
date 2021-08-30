@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
-import { Modal } from 'react-native';
 import { format, parseISO, isAfter, isToday, addDays } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 
@@ -34,15 +33,12 @@ import {
   AppointmentName,
   AppointmentMeta,
   AppointmentMetaText,
-  ModalContainer,
-  ButtonExitModal,
 } from './styles';
 import {
   selectedStyles,
   availableDaysStyles,
   daysOffStyles,
   unavailableDaysStyles,
-  pastDaysStyles,
 } from '../../../utils/Calendar/styles';
 
 import { ProfileScreenNavigationProp } from '../../../routes/StackParamList';
@@ -258,44 +254,35 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
       </Header>
 
       <Title>
-        {!modalVisible && (
-          <NetxButton onPress={handleBackDay}>
-            <Icon name="chevron-left" size={24} color="#ff9000" />
-          </NetxButton>
-        )}
+        <NetxButton onPress={handleBackDay}>
+          <Icon name="chevron-left" size={24} color="#ff9000" />
+        </NetxButton>
 
-        <TitleButton onPress={() => setModalVisible(true)}>
+        <TitleButton onPress={() => setModalVisible(!modalVisible)}>
           <TitleContainer>
             <Description>Horários agendados {'\n'}</Description>
             <TitleInfo>{selectedDateAsText}</TitleInfo>
             <TitleInfo>{selectedWeekDay}</TitleInfo>
           </TitleContainer>
         </TitleButton>
-        {!modalVisible && (
-          <BackButton onPress={handleNextDay}>
-            <Icon name="chevron-right" size={24} color="#ff9000" />
-          </BackButton>
-        )}
-      </Title>
 
-      <Modal animationType="slide" transparent visible={modalVisible}>
-        <ModalContainer>
-          <Calendars
-            current={selectedDate}
-            onDayPress={(day) => {
-              handleDateChange(day);
-            }}
-            onMonthChange={(month) => {
-              handleMonthChange(month);
-            }}
-            markingType="custom"
-            markedDates={markedDate}
-          />
-          <ButtonExitModal onPress={() => setModalVisible(!modalVisible)}>
-            <Icon name="x-circle" size={24} color="#ff9000" />
-          </ButtonExitModal>
-        </ModalContainer>
-      </Modal>
+        <BackButton onPress={handleNextDay}>
+          <Icon name="chevron-right" size={24} color="#ff9000" />
+        </BackButton>
+      </Title>
+      {!modalVisible && (
+        <Calendars
+          current={selectedDate}
+          onDayPress={(day) => {
+            handleDateChange(day);
+          }}
+          onMonthChange={(month) => {
+            handleMonthChange(month);
+          }}
+          markingType="custom"
+          markedDates={markedDate}
+        />
+      )}
 
       {isToday(selectedDate) && nextAppointment && (
         <NextAppointmentContainer>

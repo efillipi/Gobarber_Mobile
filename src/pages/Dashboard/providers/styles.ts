@@ -157,14 +157,3 @@ export const AppointmentMetaText = styled.Text`
   font-size: 18px;
   font-family: 'RobotoSlab-Regular';
 `;
-
-export const ModalContainer = styled.View`
-  position: relative;
-  flex: 1;
-  justify-content: center;
-  border: 1px solid green;
-`;
-
-export const ButtonExitModal = styled.TouchableOpacity`
-  position: absolute;
-`;
