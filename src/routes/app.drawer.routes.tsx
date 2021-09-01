@@ -5,6 +5,10 @@ import { useAuth } from '../hooks/auth';
 import DrawerNavigation from '../components/DrawerNavigation';
 import AppProvider from './appProvider.routes';
 import AppUser from './appUser.routes';
+import AppointmentsClient from '../pages/AppointmentsClient';
+import AppointmentsProvider from '../pages/AppointmentsProvider';
+import Portiforlio from '../pages/Portiforlio';
+import ServicesProvider from '../pages/ServicesProvider';
 
 import Profile from '../pages/Profile';
 
@@ -22,7 +26,7 @@ const MyDrawerClient: React.FC = () => {
       screenOptions={{
         headerShown: false,
         sceneContainerStyle: { backgroundColor: '#312e38' },
-        drawerStyle: { backgroundColor: '#312e38', width: `70%` },
+        drawerStyle: { backgroundColor: '#312e38', width: '65%' },
         drawerActiveBackgroundColor: '#ff9000',
         drawerInactiveBackgroundColor: '#3e3b47',
         drawerActiveTintColor: '#312e38',
@@ -43,15 +47,15 @@ const MyDrawerClient: React.FC = () => {
         options={{
           drawerIcon: () => <Icon name="smile" size={24} color="#312e38" />,
         }}
-        name="Profile"
+        name="Perfil"
         component={Profile}
       />
       <Drawer.Screen
         options={{
           drawerIcon: () => <Icon name="calendar" size={24} color="#312e38" />,
         }}
-        name="Meus Agendamentos"
-        component={Profile}
+        name="Agendamentos"
+        component={AppointmentsClient}
       />
     </Drawer.Navigator>
   );
@@ -64,7 +68,7 @@ const MyDrawerProvider: React.FC = () => {
       screenOptions={{
         headerShown: false,
         sceneContainerStyle: { backgroundColor: '#312e38' },
-        drawerStyle: { backgroundColor: '#312e38', width: `70%` },
+        drawerStyle: { backgroundColor: '#312e38', width: '65%' },
         drawerActiveBackgroundColor: '#ff9000',
         drawerInactiveBackgroundColor: '#3e3b47',
         drawerActiveTintColor: '#312e38',
@@ -85,7 +89,7 @@ const MyDrawerProvider: React.FC = () => {
         options={{
           drawerIcon: () => <Icon name="smile" size={24} color="#312e38" />,
         }}
-        name="Profile"
+        name="Perfil"
         component={Profile}
       />
       <Drawer.Screen
@@ -93,21 +97,21 @@ const MyDrawerProvider: React.FC = () => {
           drawerIcon: () => <Icon name="calendar" size={24} color="#312e38" />,
         }}
         name="Agendamentos"
-        component={Profile}
+        component={AppointmentsProvider}
       />
       <Drawer.Screen
         options={{
           drawerIcon: () => <Icon name="image" size={24} color="#312e38" />,
         }}
-        name="Portfolio"
-        component={Profile}
+        name="Portiforlio"
+        component={Portiforlio}
       />
       <Drawer.Screen
         options={{
           drawerIcon: () => <Icon name="briefcase" size={24} color="#312e38" />,
         }}
         name="Serviços"
-        component={Profile}
+        component={ServicesProvider}
       />
     </Drawer.Navigator>
   );
