@@ -23,16 +23,18 @@ export const UserAvatar = styled.Image`
 export const Content = styled.View`
   flex: 1;
   justify-content: space-between;
+  margin: 24px 0;
 `;
 
 export const DrawerItemListContent = styled.View``;
 
 export const SignOutButton = styled.TouchableOpacity`
   align-items: center;
-  margin-bottom: 24px;
+  /* margin-bottom: 24px; */
 `;
 export const SignOutContainer = styled.View`
   flex-direction: row;
+  align-items: center;
 `;
 export const SignOutText = styled.Text`
   color: #fff;
