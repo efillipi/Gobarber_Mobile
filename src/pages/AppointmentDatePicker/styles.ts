@@ -3,7 +3,7 @@ import {
   getStatusBarHeight,
   getBottomSpace,
 } from 'react-native-iphone-x-helper';
-import { FlatList } from 'react-native';
+import { FlatList, Platform } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 import { Provider } from '.';
 
@@ -31,8 +31,10 @@ export const Container = styled.ScrollView.attrs({
 })``;
 
 export const Header = styled.View`
-  padding: 24px;
-  padding-top: ${getStatusBarHeight() + 24}px;
+  padding: 0 12px 12px 24px;
+  padding-top: ${Platform.OS === 'android'
+    ? 24
+    : `${getStatusBarHeight() + 24}`}px;
   background: #28262e;
   flex-direction: row;
   align-items: center;
@@ -49,13 +51,7 @@ export const HeaderTitle = styled.Text`
   margin-left: 16px;
 `;
 
-export const ProfileButton = styled.TouchableOpacity`
-  border-width: 1px;
-  width: 60px;
-  height: 60px;
-  border-radius: 30px;
-  border-color: #3e3b47;
-`;
+export const ProfileButton = styled.TouchableOpacity``;
 
 export const UserAvatar = styled.Image`
   width: 56px;

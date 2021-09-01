@@ -10,8 +10,10 @@ export const Container = styled.View`
 `;
 
 export const Header = styled.View`
-  padding: 24px;
-  padding-top: ${getStatusBarHeight() + 24}px;
+  padding: 0 12px 12px 24px;
+  padding-top: ${Platform.OS === 'android'
+    ? 24
+    : `${getStatusBarHeight() + 24}`}px;
   background: #28262e;
   flex-direction: row;
   justify-content: space-between;
