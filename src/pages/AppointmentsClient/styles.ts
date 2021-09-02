@@ -1,9 +1,13 @@
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 import {
   getStatusBarHeight,
   getBottomSpace,
 } from 'react-native-iphone-x-helper';
 import { Platform } from 'react-native';
+
+interface Props {
+  next?: boolean;
+}
 
 export const Container = styled.View`
   flex: 1;
@@ -35,49 +39,34 @@ export const UserName = styled.Text`
 
 export const ProfileButton = styled.TouchableOpacity``;
 
+export const BackButton = styled.TouchableOpacity`
+  justify-content: center;
+`;
 export const UserAvatar = styled.Image`
   width: 56px;
   height: 56px;
   border-radius: 28px;
 `;
 
-export const Title = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  margin: 0 24px 12px;
-`;
-
-export const TitleContainer = styled.Text`
-  font-family: 'RobotoSlab-Medium';
-  color: #f4ede8;
-  font-size: ${Platform.OS === 'android' ? 24 : 18}px;
-`;
-
-export const TitleButton = styled.TouchableOpacity`
-  justify-content: center;
-
-  margin: 0 24px 0 24px;
-`;
-export const NetxButton = styled.TouchableOpacity`
-  justify-content: center;
-`;
-
-export const BackButton = styled.TouchableOpacity`
-  justify-content: center;
-`;
-
-export const Description = styled.Text``;
-
 export const TitleInfo = styled.Text`
   color: #ff9000;
+  font-size: 24px;
+  font-family: 'RobotoSlab-Regular';
+  margin: 24px 24px;
 `;
 
 export const NextAppointmentContainer = styled.View`
   margin: 0 0 12px;
 `;
 
-export const NextAppointment = styled.TouchableOpacity`
+export const AppointmentBorder = styled.View`
+  background: #ff9000;
+  height: 100%;
+  width: 2px;
+  margin-right: 10px;
+`;
+
+export const NextAppointment = styled.View`
   flex-direction: row;
   justify-content: center;
   margin-bottom: 16px;
@@ -111,16 +100,21 @@ export const SectionContent = styled.View`
   margin: 0 24px 0px;
 `;
 
-export const AppointmentContainer = styled.TouchableOpacity`
+export const AppointmentContainer = styled.View`
   flex-direction: row;
   justify-content: center;
   margin-bottom: 16px;
   border-radius: 10px;
 `;
 
-export const AppointmentInfo = styled.View`
+export const AppointmentInfo = styled.View<Props>`
   flex: 1;
   padding: 10px;
+  ${(props) =>
+    props.next &&
+    css`
+      padding-left: 0;
+    `};
   height: 100%;
   background: #3e3b47;
   margin-bottom: 16px;
