@@ -77,7 +77,7 @@ export const NextAppointmentContainer = styled.View`
   margin: 0 0 12px;
 `;
 
-export const NextAppointment = styled.TouchableOpacity`
+export const NextAppointment = styled.View`
   flex-direction: row;
   justify-content: center;
   margin-bottom: 16px;
@@ -111,7 +111,7 @@ export const SectionContent = styled.View`
   margin: 0 24px 0px;
 `;
 
-export const AppointmentContainer = styled.TouchableOpacity`
+export const AppointmentContainer = styled.View`
   flex-direction: row;
   justify-content: center;
   margin-bottom: 16px;
