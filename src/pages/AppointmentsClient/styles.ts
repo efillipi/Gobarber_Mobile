@@ -42,6 +42,7 @@ export const ProfileButton = styled.TouchableOpacity``;
 export const BackButton = styled.TouchableOpacity`
   justify-content: center;
 `;
+
 export const UserAvatar = styled.Image`
   width: 56px;
   height: 56px;
@@ -52,12 +53,10 @@ export const TitleInfo = styled.Text`
   color: #ff9000;
   font-size: 24px;
   font-family: 'RobotoSlab-Regular';
-  margin: 24px 24px;
+  margin: 0 24px 24px;
 `;
 
-export const NextAppointmentContainer = styled.View`
-  margin: 0 0 12px;
-`;
+export const NextAppointmentContainer = styled.View``;
 
 export const AppointmentBorder = styled.View`
   background: #ff9000;
@@ -139,8 +138,14 @@ export const AppointmentName = styled.Text`
 
 export const AppointmentMeta = styled.View`
   align-items: center;
-  flex-direction: row;
   justify-content: center;
+`;
+
+export const AppointmentMetaDescription = styled.Text`
+  margin-left: 8px;
+  color: #ff9000;
+  font-size: 18px;
+  font-family: 'RobotoSlab-Regular';
 `;
 
 export const AppointmentMetaText = styled.Text`

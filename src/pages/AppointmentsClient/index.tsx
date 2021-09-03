@@ -23,6 +23,7 @@ import {
   AppointmentInfo,
   AppointmentMeta,
   AppointmentMetaText,
+  AppointmentMetaDescription,
 } from './styles';
 import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
 
@@ -31,9 +32,8 @@ export interface Appointment {
   dateAppointment: string;
   dateFormatted: string;
   hour: string;
-  user: {
+  provider: {
     name: string;
-    avatar_url: string;
   };
 }
 
@@ -55,7 +55,7 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
           hour: format(parseISO(appointment.dateAppointment), 'HH:mm'),
           dateFormatted: format(
             parseISO(appointment.dateAppointment),
-            "EEEE', dia' dd 'de' MMMM 'de' yyyy 'às' HH:mm'h'",
+            "dd'/'MM",
             {
               locale: ptBR,
             },
@@ -106,18 +106,24 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
 
           <NextAppointment>
             <AppointmentMeta>
-              <Icon name="calendar" size={24} color="#ff9000" />
+              <AppointmentMetaDescription>
+                {nextAppointment?.dateFormatted}
+              </AppointmentMetaDescription>
+              <AppointmentMetaDescription>
+                {nextAppointment?.hour}
+              </AppointmentMetaDescription>
             </AppointmentMeta>
 
             <AppointmentInfo next>
               <AppointmentBorder />
               <AppointmentMetaText>
-                {nextAppointment?.dateFormatted}
+                Agendado com{'\n'} {nextAppointment.provider.name}
               </AppointmentMetaText>
             </AppointmentInfo>
           </NextAppointment>
         </NextAppointmentContainer>
       )}
+
       <Schedule>
         <Section>
           <SectionTitle>Agendamentos Futuros</SectionTitle>
@@ -128,12 +134,17 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
             {futureAppointments.map((appointment) => (
               <AppointmentContainer key={appointment.id}>
                 <AppointmentMeta>
-                  <Icon name="calendar" size={24} color="#ff9000" />
+                  <AppointmentMetaDescription>
+                    {appointment?.dateFormatted}
+                  </AppointmentMetaDescription>
+                  <AppointmentMetaDescription>
+                    {appointment?.hour}
+                  </AppointmentMetaDescription>
                 </AppointmentMeta>
 
                 <AppointmentInfo>
                   <AppointmentMetaText>
-                    {appointment?.dateFormatted}
+                    Agendado com{'\n'} {appointment.provider.name}
                   </AppointmentMetaText>
                 </AppointmentInfo>
               </AppointmentContainer>
@@ -150,12 +161,17 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
             {aastAppointments.map((appointment) => (
               <AppointmentContainer key={appointment.id}>
                 <AppointmentMeta>
-                  <Icon name="calendar" size={24} color="#ff9000" />
+                  <AppointmentMetaDescription>
+                    {appointment?.dateFormatted}
+                  </AppointmentMetaDescription>
+                  <AppointmentMetaDescription>
+                    {appointment?.hour}
+                  </AppointmentMetaDescription>
                 </AppointmentMeta>
 
                 <AppointmentInfo>
                   <AppointmentMetaText>
-                    {appointment?.dateFormatted}
+                    Agendado com{'\n'} {appointment.provider.name}
                   </AppointmentMetaText>
                 </AppointmentInfo>
               </AppointmentContainer>
