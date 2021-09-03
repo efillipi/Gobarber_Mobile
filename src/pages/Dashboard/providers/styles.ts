@@ -1,9 +1,13 @@
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 import {
   getStatusBarHeight,
   getBottomSpace,
 } from 'react-native-iphone-x-helper';
 import { Platform } from 'react-native';
+
+interface Props {
+  next?: boolean;
+}
 
 export const Container = styled.View`
   flex: 1;
@@ -63,6 +67,13 @@ export const NetxButton = styled.TouchableOpacity`
   justify-content: center;
 `;
 
+export const AppointmentBorder = styled.View`
+  background: #ff9000;
+  height: 100%;
+  width: 2px;
+  margin-right: 10px;
+`;
+
 export const BackButton = styled.TouchableOpacity`
   justify-content: center;
 `;
@@ -118,9 +129,14 @@ export const AppointmentContainer = styled.View`
   border-radius: 10px;
 `;
 
-export const AppointmentInfo = styled.View`
+export const AppointmentInfo = styled.View<Props>`
   flex: 1;
   padding: 10px;
+  ${(props) =>
+    props.next &&
+    css`
+      padding-left: 0;
+    `};
   height: 100%;
   background: #3e3b47;
   margin-bottom: 16px;

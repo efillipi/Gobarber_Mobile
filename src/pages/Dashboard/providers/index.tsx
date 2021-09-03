@@ -26,6 +26,7 @@ import {
   BackButton,
   NextAppointmentContainer,
   NextAppointment,
+  AppointmentBorder,
   AppointmentContainer,
   AppointmentAvatar,
   AppointmentInfo,
@@ -224,13 +225,14 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
         <NextAppointmentContainer>
           <SectionTitle>Agendamento a seguir </SectionTitle>
 
-          <NextAppointment onPress={() => console.log(nextAppointment)}>
+          <NextAppointment>
             <AppointmentMeta>
               <Icon name="clock" size={14} color="#ff9000" />
               <AppointmentMetaText>{nextAppointment?.hour}</AppointmentMetaText>
             </AppointmentMeta>
 
-            <AppointmentInfo>
+            <AppointmentInfo next>
+              <AppointmentBorder />
               <AppointmentAvatar
                 source={{ uri: nextAppointment?.user.avatar_url }}
               />
@@ -249,10 +251,7 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
           )}
           <SectionContent>
             {morningAvailability.map((appointment) => (
-              <AppointmentContainer
-                key={appointment.id}
-                onPress={() => console.log(appointment)}
-              >
+              <AppointmentContainer key={appointment.id}>
                 <AppointmentMeta>
                   <Icon name="clock" size={14} color="#ff9000" />
                   <AppointmentMetaText>{appointment.hour}</AppointmentMetaText>
@@ -276,10 +275,7 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
           )}
           <SectionContent>
             {afternoonAvailability.map((appointment) => (
-              <AppointmentContainer
-                key={appointment.id}
-                onPress={() => console.log(appointment)}
-              >
+              <AppointmentContainer key={appointment.id}>
                 <AppointmentMeta>
                   <Icon name="clock" size={14} color="#ff9000" />
                   <AppointmentMetaText>{appointment.hour}</AppointmentMetaText>
