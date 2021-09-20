@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import { format, parseISO, isAfter, isToday, addDays } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
-import OneSignal from 'react-native-onesignal';
 import Calendars from '../../../components/Calendar';
 import api from '../../../services/api';
 import { useAuth } from '../../../hooks/auth';
@@ -73,13 +72,6 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
   >([]);
   const [markedDate, setMarkedDate] = useState({});
   const [currentMonth, setCurrentMonth] = useState(new Date());
-
-  useEffect(() => {
-    // OneSignal Init Code
-    OneSignal.setLogLevel(6, 0);
-    OneSignal.setAppId('54f801e4-ad9c-4ce2-8812-a390df3a1e01');
-    // END OneSignal Init Code
-  }, []);
 
   useEffect(() => {
     api

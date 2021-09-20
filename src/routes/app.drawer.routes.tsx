@@ -1,18 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/Feather';
+import OneSignal from 'react-native-onesignal';
 import { useAuth } from '../hooks/auth';
 import DrawerNavigation from '../components/DrawerNavigation';
 import AppProvider from './appProvider.routes';
 import AppUser from './appUser.routes';
 import AppointmentsClient from '../pages/AppointmentsClient';
-
 import Profile from '../pages/Profile';
 
 const Drawer = createDrawerNavigator();
 
 const AppRoutes: React.FC = () => {
   const { user } = useAuth();
+
+  useEffect(() => {
+    // OneSignal Init Code
+    OneSignal.setAppId('54f801e4-ad9c-4ce2-8812-a390df3a1e01');
+    OneSignal.setExternalUserId(user.id);
+    // END OneSignal Init Code
+  }, [user]);
+
   return user.role === 'Provider' ? <AppProvider /> : <MyDrawerClient />;
 };
 
