@@ -127,7 +127,7 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
                       <Icon name="check-square" size={24} color="#04d361" />
                     </AppointmentMetaIcon>
                     <AppointmentMetaIcon
-                      onPress={() => handleApproved(appointment.id)}
+                      onPress={() => handleRejection(appointment.id)}
                     >
                       <Icon name="x-square" size={24} color="#c53030" />
                     </AppointmentMetaIcon>
