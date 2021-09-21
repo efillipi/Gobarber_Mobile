@@ -4,9 +4,6 @@ import {
   getBottomSpace,
 } from 'react-native-iphone-x-helper';
 import { Platform } from 'react-native';
-import { FlatList } from 'react-native';
-
-import { Appointment } from '.';
 
 interface Props {
   next?: boolean;
@@ -97,7 +94,7 @@ export const AppointmentInfo = styled.View<Props>`
   margin-left: 20px;
   flex-direction: row;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
 `;
 
 export const AppointmentAvatar = styled.Image`
@@ -118,9 +115,17 @@ export const AppointmentMeta = styled.View`
   justify-content: center;
 `;
 
+export const AppointmentMetaIconContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+`;
+
 export const AppointmentMetaIcon = styled.TouchableOpacity`
   align-items: center;
   justify-content: center;
+
+  margin: 0 8px 0 8px;
 `;
 
 export const AppointmentMetaDescription = styled.Text`
@@ -135,21 +140,4 @@ export const AppointmentMetaText = styled.Text`
   color: #f4ede8;
   font-size: 18px;
   font-family: 'RobotoSlab-Regular';
-`;
-
-export const ProvidersList = styled(
-  FlatList as new () => FlatList<Appointment>,
-).attrs({
-  contentContainerStyle: {
-    paddingTop: 32,
-    paddingBottom: 16,
-    paddingHorizontal: 24,
-  },
-})``;
-
-export const ProvidersListTitle = styled.Text`
-  font-family: 'RobotoSlab-Medium';
-  color: #f4ede8;
-  font-size: 24px;
-  margin-bottom: 24px;
 `;

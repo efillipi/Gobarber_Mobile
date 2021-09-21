@@ -15,9 +15,13 @@ import {
   AppointmentMeta,
   AppointmentMetaText,
   AppointmentMetaDescription,
+  Schedule,
+  Section,
+  SectionTitle,
+  SectionSubTitle,
+  SectionContent,
   AppointmentMetaIcon,
-  ProvidersList,
-  ProvidersListTitle,
+  AppointmentMetaIconContainer,
 } from './styles';
 import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
 
@@ -95,39 +99,45 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
           <UserAvatar source={{ uri: user.avatar_url }} />
         </ProfileButton>
       </Header>
-      <ProvidersList
-        data={appointments}
-        keyExtractor={(appointment) => appointment.id}
-        ListHeaderComponent={
-          <ProvidersListTitle>Futuros Agendamentos</ProvidersListTitle>
-        }
-        renderItem={({ item: appointment }) => (
-          <AppointmentContainer key={appointment.id}>
-            <AppointmentMeta>
-              <AppointmentMetaDescription>
-                {appointment?.dateFormatted}
-              </AppointmentMetaDescription>
-              <AppointmentMetaDescription>
-                {appointment?.hour}
-              </AppointmentMetaDescription>
-            </AppointmentMeta>
-
-            <AppointmentInfo>
-              <AppointmentMetaText>{appointment.user.name}</AppointmentMetaText>
-              <AppointmentMetaIcon
-                onPress={() => handleApproved(appointment.id)}
-              >
-                <Icon name="check-square" size={24} color="#04d361" />
-              </AppointmentMetaIcon>
-              <AppointmentMetaIcon
-                onPress={() => handleRejection(appointment.id)}
-              >
-                <Icon name="x-square" size={24} color="#c53030" />
-              </AppointmentMetaIcon>
-            </AppointmentInfo>
-          </AppointmentContainer>
-        )}
-      />
+      <Schedule>
+        <Section>
+          <SectionTitle>Agendamentos Futuros</SectionTitle>
+          {appointments.length === 0 && (
+            <SectionSubTitle>Nenhum agendamento neste período</SectionSubTitle>
+          )}
+          <SectionContent>
+            {appointments.map((appointment) => (
+              <AppointmentContainer key={appointment.id}>
+                <AppointmentMeta>
+                  <AppointmentMetaDescription>
+                    {appointment?.dateFormatted}
+                  </AppointmentMetaDescription>
+                  <AppointmentMetaDescription>
+                    {appointment?.hour}
+                  </AppointmentMetaDescription>
+                </AppointmentMeta>
+                <AppointmentInfo>
+                  <AppointmentMetaText>
+                    {appointment.user.name}
+                  </AppointmentMetaText>
+                  <AppointmentMetaIconContainer>
+                    <AppointmentMetaIcon
+                      onPress={() => handleApproved(appointment.id)}
+                    >
+                      <Icon name="check-square" size={24} color="#04d361" />
+                    </AppointmentMetaIcon>
+                    <AppointmentMetaIcon
+                      onPress={() => handleApproved(appointment.id)}
+                    >
+                      <Icon name="x-square" size={24} color="#c53030" />
+                    </AppointmentMetaIcon>
+                  </AppointmentMetaIconContainer>
+                </AppointmentInfo>
+              </AppointmentContainer>
+            ))}
+          </SectionContent>
+        </Section>
+      </Schedule>
     </Container>
   );
 };
