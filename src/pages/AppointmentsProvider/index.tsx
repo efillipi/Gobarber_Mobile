@@ -6,22 +6,18 @@ import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
 import {
   Container,
+  BackButton,
   Header,
-  HeaderTitle,
-  UserName,
   ProfileButton,
   UserAvatar,
-  Schedule,
-  Section,
-  SectionTitle,
-  SectionSubTitle,
-  SectionContent,
   AppointmentContainer,
   AppointmentInfo,
   AppointmentMeta,
   AppointmentMetaText,
   AppointmentMetaDescription,
   AppointmentMetaIcon,
+  ProvidersList,
+  ProvidersListTitle,
 } from './styles';
 import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
 
@@ -43,7 +39,6 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
   const { user } = useAuth();
 
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [atualizar, setatualizar] = useState('');
 
   useEffect(() => {
     api
@@ -71,7 +66,7 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
 
         setAppointments(appointmentsFormatted);
       });
-  }, [user, atualizar]);
+  }, [user, appointments]);
 
   const handleApproved = useCallback((id_appointment: string) => {
     api.post(`/appointments/${id_appointment}/approval`, {
@@ -79,7 +74,6 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
         approved: false,
       },
     });
-    setatualizar('handleApproved');
   }, []);
 
   const handleRejection = useCallback((id_appointment: string) => {
@@ -88,60 +82,52 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
         approved: false,
       },
     });
-    setatualizar('handleRejection');
   }, []);
 
   return (
     <Container>
       <Header>
-        <HeaderTitle>
-          Bem vindo, {'\n'}
-          <UserName>{user.name}</UserName>
-        </HeaderTitle>
+        <BackButton onPress={() => navigation.goBack()}>
+          <Icon name="chevron-left" size={24} color="#999591" />
+        </BackButton>
 
         <ProfileButton onPress={() => navigation.navigate('Profile')}>
           <UserAvatar source={{ uri: user.avatar_url }} />
         </ProfileButton>
       </Header>
+      <ProvidersList
+        data={appointments}
+        keyExtractor={(appointment) => appointment.id}
+        ListHeaderComponent={
+          <ProvidersListTitle>Futuros Agendamentos</ProvidersListTitle>
+        }
+        renderItem={({ item: appointment }) => (
+          <AppointmentContainer key={appointment.id}>
+            <AppointmentMeta>
+              <AppointmentMetaDescription>
+                {appointment?.dateFormatted}
+              </AppointmentMetaDescription>
+              <AppointmentMetaDescription>
+                {appointment?.hour}
+              </AppointmentMetaDescription>
+            </AppointmentMeta>
 
-      <Schedule>
-        <Section>
-          <SectionTitle>Agendamentos Futuros</SectionTitle>
-          {appointments.length === 0 && (
-            <SectionSubTitle>Nenhum agendamento neste período</SectionSubTitle>
-          )}
-          <SectionContent>
-            {appointments.map((appointment) => (
-              <AppointmentContainer key={appointment.id}>
-                <AppointmentMeta>
-                  <AppointmentMetaDescription>
-                    {appointment?.dateFormatted}
-                  </AppointmentMetaDescription>
-                  <AppointmentMetaDescription>
-                    {appointment?.hour}
-                  </AppointmentMetaDescription>
-                </AppointmentMeta>
-
-                <AppointmentInfo>
-                  <AppointmentMetaText>
-                    {appointment.user.name}
-                  </AppointmentMetaText>
-                  <AppointmentMetaIcon
-                    onPress={() => handleApproved(appointment.id)}
-                  >
-                    <Icon name="check-square" size={24} color="#04d361" />
-                  </AppointmentMetaIcon>
-                  <AppointmentMetaIcon
-                    onPress={() => handleRejection(appointment.id)}
-                  >
-                    <Icon name="x-square" size={24} color="#c53030" />
-                  </AppointmentMetaIcon>
-                </AppointmentInfo>
-              </AppointmentContainer>
-            ))}
-          </SectionContent>
-        </Section>
-      </Schedule>
+            <AppointmentInfo>
+              <AppointmentMetaText>{appointment.user.name}</AppointmentMetaText>
+              <AppointmentMetaIcon
+                onPress={() => handleApproved(appointment.id)}
+              >
+                <Icon name="check-square" size={24} color="#04d361" />
+              </AppointmentMetaIcon>
+              <AppointmentMetaIcon
+                onPress={() => handleRejection(appointment.id)}
+              >
+                <Icon name="x-square" size={24} color="#c53030" />
+              </AppointmentMetaIcon>
+            </AppointmentInfo>
+          </AppointmentContainer>
+        )}
+      />
     </Container>
   );
 };
