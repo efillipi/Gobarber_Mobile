@@ -1,9 +1,9 @@
 import styled, { css } from 'styled-components/native';
-import {
-  getStatusBarHeight,
-  getBottomSpace,
-} from 'react-native-iphone-x-helper';
+import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 import { Platform } from 'react-native';
+
+import { FlatList } from 'react-native';
+import { Appointment } from '.';
 
 interface Props {
   next?: boolean;
@@ -44,32 +44,6 @@ export const UserAvatar = styled.Image`
   width: 56px;
   height: 56px;
   border-radius: 28px;
-`;
-
-export const Schedule = styled.ScrollView.attrs({
-  contentContainerStyle: {
-    paddingBottom: getBottomSpace(),
-  },
-})``;
-
-export const Section = styled.View``;
-
-export const SectionTitle = styled.Text`
-  font-size: 24px;
-  color: #999591;
-  font-family: 'RobotoSlab-Regular';
-  margin: 24px 24px;
-`;
-
-export const SectionSubTitle = styled.Text`
-  font-size: 18px;
-  color: #999591;
-  font-family: 'RobotoSlab-Regular';
-  margin: 0 24px 24px;
-`;
-
-export const SectionContent = styled.View`
-  margin: 0 24px 0px;
 `;
 
 export const AppointmentContainer = styled.View`
@@ -140,4 +114,21 @@ export const AppointmentMetaText = styled.Text`
   color: #f4ede8;
   font-size: 18px;
   font-family: 'RobotoSlab-Regular';
+`;
+
+export const ProvidersList = styled(
+  FlatList as new () => FlatList<Appointment>,
+).attrs({
+  contentContainerStyle: {
+    paddingTop: 32,
+    paddingBottom: 16,
+    paddingHorizontal: 24,
+  },
+})``;
+
+export const ProvidersListTitle = styled.Text`
+  font-family: 'RobotoSlab-Medium';
+  color: #f4ede8;
+  font-size: 24px;
+  margin-bottom: 24px;
 `;
