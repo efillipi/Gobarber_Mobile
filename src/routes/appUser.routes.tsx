@@ -28,7 +28,7 @@ const AppRoutesUser: React.FC = () => (
       component={AppointmentConfirmation}
     />
     <App.Screen name="AppointmentCreated" component={AppointmentCreated} />
-    <App.Screen name="Agendamento" component={AppointmentsById} />
+    <App.Screen name="AppointmentsById" component={AppointmentsById} />
   </App.Navigator>
 );
 

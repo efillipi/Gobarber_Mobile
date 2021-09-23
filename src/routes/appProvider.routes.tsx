@@ -18,7 +18,7 @@ const AppRoutesProvider: React.FC = () => (
     <App.Screen name="Dashboard" component={DashboardProviders} />
     <App.Screen name="Profile" component={Profile} />
     <App.Screen name="Agendamentos Provider" component={AppointmentsProvider} />
-    <App.Screen name="Agendamento" component={AppointmentsById} />
+    <App.Screen name="AppointmentsById" component={AppointmentsById} />
   </App.Navigator>
 );
 

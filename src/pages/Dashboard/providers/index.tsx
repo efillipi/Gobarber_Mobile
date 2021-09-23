@@ -46,6 +46,10 @@ export interface Appointment {
     name: string;
     avatar_url: string;
   };
+  provider: {
+    name: string;
+    avatar_url: string;
+  };
 }
 
 interface CalendarObjects {
@@ -174,6 +178,25 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
     setModalVisible(!modalVisible);
   }, [modalVisible]);
 
+  const handleAppointment = useCallback(
+    (appointment: Appointment) => {
+      navigation.navigate('AppointmentsById', {
+        id: appointment.id,
+        dateAppointment: appointment.dateAppointment,
+        hour: appointment.hour,
+        user: {
+          name: appointment.user.name,
+          avatar_url: appointment.user.avatar_url,
+        },
+        provider: {
+          name: appointment.provider.name,
+          avatar_url: appointment.provider.avatar_url,
+        },
+      });
+    },
+    [navigation],
+  );
+
   return (
     <Container>
       <Header>
@@ -231,7 +254,12 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
               <AppointmentMetaText>{nextAppointment?.hour}</AppointmentMetaText>
             </AppointmentMeta>
 
-            <AppointmentInfo next>
+            <AppointmentInfo
+              next
+              onPress={() => {
+                handleAppointment(nextAppointment);
+              }}
+            >
               <AppointmentBorder />
               <AppointmentAvatar
                 source={{ uri: nextAppointment?.user.avatar_url }}
@@ -257,7 +285,11 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
                   <AppointmentMetaText>{appointment.hour}</AppointmentMetaText>
                 </AppointmentMeta>
 
-                <AppointmentInfo>
+                <AppointmentInfo
+                  onPress={() => {
+                    handleAppointment(appointment);
+                  }}
+                >
                   <AppointmentAvatar
                     source={{ uri: appointment.user.avatar_url }}
                   />
@@ -281,7 +313,11 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
                   <AppointmentMetaText>{appointment.hour}</AppointmentMetaText>
                 </AppointmentMeta>
 
-                <AppointmentInfo>
+                <AppointmentInfo
+                  onPress={() => {
+                    handleAppointment(appointment);
+                  }}
+                >
                   <AppointmentAvatar
                     source={{ uri: appointment.user.avatar_url }}
                   />

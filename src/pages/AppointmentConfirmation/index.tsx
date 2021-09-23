@@ -49,7 +49,7 @@ const AppointmentConfirmation: React.FC<ProfileScreenNavigationProp> = ({
       navigation.navigate('AppointmentCreated', {
         date,
       });
-    } catch (error) {
+    } catch (error: any) {
       Alert.alert(
         'Erro ao criar agendamento',
         `${error.response.data.message}`,

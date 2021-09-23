@@ -16,6 +16,19 @@ type StackParamList = {
     };
   };
   AppointmentCreated: { date: number };
+  AppointmentsById: {
+    id: string;
+    dateAppointment: string;
+    hour: string;
+    user: {
+      name: string;
+      avatar_url: string;
+    };
+    provider: {
+      name: string;
+      avatar_url: string;
+    };
+  };
 };
 
 export type ProfileScreenNavigationProp =

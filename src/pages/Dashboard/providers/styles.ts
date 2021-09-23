@@ -129,7 +129,7 @@ export const AppointmentContainer = styled.View`
   border-radius: 10px;
 `;
 
-export const AppointmentInfo = styled.View<Props>`
+export const AppointmentInfo = styled.TouchableOpacity<Props>`
   flex: 1;
   padding: 10px;
   ${(props) =>

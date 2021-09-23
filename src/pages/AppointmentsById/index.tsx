@@ -1,49 +1,139 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import Icon from 'react-native-vector-icons/Feather';
+import React, { useCallback } from 'react';
+import { ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+
 import { format, parseISO } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
-import api from '../../services/api';
-import { useAuth } from '../../hooks/auth';
+
+import Icon from 'react-native-vector-icons/Feather';
+
+import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
+
 import {
   Container,
+  BackButtonContainer,
   BackButton,
-  Header,
-  ProfileButton,
-  UserAvatar,
+  Title,
+  Avatar,
+  UserAvatarButton,
+  SectionContent,
+  AppointmentContainer,
+  AppointmentInfo,
+  AppointmentMeta,
+  AppointmentMetaText,
+  AppointmentMetaIcon,
+  ButtonContainer,
+  ButtonText,
 } from './styles';
-import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
+import api from '../../services/api';
 
 export interface Appointment {
   id: string;
   dateAppointment: string;
-  dateFormatted: string;
   hour: string;
-  provider: {
-    name: string;
-  };
   user: {
+    name: string;
+    avatar_url: string;
+  };
+  provider: {
     name: string;
     avatar_url: string;
   };
 }
 
-const AppointmentsById: React.FC<ProfileScreenNavigationProp> = ({
+const Profile: React.FC<ProfileScreenNavigationProp> = ({
   navigation,
+  route,
 }) => {
-  const { user } = useAuth();
+  const appointment = route.params as Appointment;
+
+  const handleRejection = useCallback(
+    (id_appointment: string) => {
+      console.log({ id_appointment });
+      api.post(`/appointments/${id_appointment}/rejection`, {
+        params: {
+          approved: false,
+        },
+      });
+      navigation.goBack();
+    },
+    [navigation],
+  );
 
   return (
-    <Container>
-      <Header>
-        <BackButton onPress={() => navigation.goBack()}>
-          <Icon name="chevron-left" size={24} color="#999591" />
-        </BackButton>
+    <>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        enabled
+      >
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ flex: 1 }}
+        >
+          <Container>
+            <BackButton onPress={() => navigation.goBack()}>
+              <BackButtonContainer>
+                <Icon name="chevron-left" size={24} color="#999591" />
+              </BackButtonContainer>
+            </BackButton>
 
-        <ProfileButton onPress={() => navigation.navigate('Profile')}>
-          <UserAvatar source={{ uri: user.avatar_url }} />
-        </ProfileButton>
-      </Header>
-    </Container>
+            <UserAvatarButton>
+              <Avatar source={{ uri: appointment.user.avatar_url }} />
+            </UserAvatarButton>
+
+            <SectionContent>
+              <Title>Detalhes do Agendamento</Title>
+              <AppointmentContainer key={appointment?.user.name}>
+                <AppointmentMeta>
+                  <AppointmentMetaIcon>
+                    <Icon name="scissors" size={24} color="#ff9000" />
+                  </AppointmentMetaIcon>
+                </AppointmentMeta>
+                <AppointmentInfo>
+                  <AppointmentMetaText>
+                    {appointment?.user.name}
+                  </AppointmentMetaText>
+                </AppointmentInfo>
+              </AppointmentContainer>
+
+              <AppointmentContainer key={appointment?.dateAppointment}>
+                <AppointmentMeta>
+                  <AppointmentMetaIcon>
+                    <Icon name="calendar" size={24} color="#ff9000" />
+                  </AppointmentMetaIcon>
+                </AppointmentMeta>
+                <AppointmentInfo>
+                  <AppointmentMetaText>
+                    {format(
+                      parseISO(appointment.dateAppointment),
+                      'MM/dd/yyyy',
+                      {
+                        locale: ptBR,
+                      },
+                    )}
+                  </AppointmentMetaText>
+                </AppointmentInfo>
+              </AppointmentContainer>
+
+              <AppointmentContainer key={appointment?.hour}>
+                <AppointmentMeta>
+                  <AppointmentMetaIcon>
+                    <Icon name="clock" size={24} color="#ff9000" />
+                  </AppointmentMetaIcon>
+                </AppointmentMeta>
+                <AppointmentInfo>
+                  <AppointmentMetaText>{appointment?.hour}</AppointmentMetaText>
+                </AppointmentInfo>
+              </AppointmentContainer>
+            </SectionContent>
+            <ButtonContainer onPress={() => handleRejection(appointment.id)}>
+              <ButtonText>Cancelar Agendamento</ButtonText>
+            </ButtonContainer>
+          </Container>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </>
   );
 };
-export default AppointmentsById;
+
+export default Profile;
