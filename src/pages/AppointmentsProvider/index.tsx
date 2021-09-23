@@ -97,31 +97,36 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
         });
 
         setAppointments(appointmentsFormatted);
-
         setIsLoading(false);
       });
   }, []);
 
   const handleApproved = useCallback(
     (id_appointment: string) => {
-      api.post(`/appointments/${id_appointment}/approval`, {
-        params: {
-          approved: false,
-        },
-      });
-      getData();
+      api
+        .post(`/appointments/${id_appointment}/approval`, {
+          params: {
+            approved: false,
+          },
+        })
+        .then(() => {
+          getData();
+        });
     },
     [getData],
   );
 
   const handleRejection = useCallback(
     (id_appointment: string) => {
-      api.post(`/appointments/${id_appointment}/rejection`, {
-        params: {
-          approved: false,
-        },
-      });
-      getData();
+      api
+        .post(`/appointments/${id_appointment}/rejection`, {
+          params: {
+            approved: false,
+          },
+        })
+        .then(() => {
+          getData();
+        });
     },
     [getData],
   );
