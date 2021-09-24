@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { format, parseISO, isAfter, isToday, addDays } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
@@ -33,6 +34,11 @@ import {
   AppointmentName,
   AppointmentMeta,
   AppointmentMetaText,
+  AppointmentMetaIcon,
+  SectionContentModal,
+  ButtonContainer,
+  ButtonText,
+  ButtonContainerModal,
 } from './styles';
 import { objectTransformProvider } from '../../../utils/Calendar/objectTransform';
 import { ProfileScreenNavigationProp } from '../../../routes/StackParamList';
@@ -40,6 +46,7 @@ import { ProfileScreenNavigationProp } from '../../../routes/StackParamList';
 export interface Appointment {
   id: string;
   dateAppointment: string;
+  dateAppointmentFormatted: string;
   hourFormatted: Date;
   hour: string;
   user: {
@@ -70,7 +77,10 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [appointmentData, setAppointmentData] = useState<Appointment>();
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisibleAppointments, setModalVisibleAppointments] =
+    useState(false);
   const [monthAvailability, setMonthAvailability] = useState<
     MonthAvailabilityItem[]
   >([]);
@@ -87,8 +97,16 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
         },
       })
       .then((response) => {
+        setAppointmentData(response.data[0]);
         const appointmentsFormatted = response.data.map((appointment) => ({
           ...appointment,
+          dateAppointmentFormatted: format(
+            parseISO(appointment.dateAppointment),
+            'MM/dd/yyyy',
+            {
+              locale: ptBR,
+            },
+          ),
           hourFormatted: parseISO(appointment.dateAppointment),
           hour: format(parseISO(appointment.dateAppointment), 'HH:mm'),
         }));
@@ -178,24 +196,9 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
     setModalVisible(!modalVisible);
   }, [modalVisible]);
 
-  const handleAppointment = useCallback(
-    (appointment: Appointment) => {
-      navigation.navigate('AppointmentsById', {
-        id: appointment.id,
-        dateAppointment: appointment.dateAppointment,
-        hour: appointment.hour,
-        user: {
-          name: appointment.user.name,
-          avatar_url: appointment.user.avatar_url,
-        },
-        provider: {
-          name: appointment.provider.name,
-          avatar_url: appointment.provider.avatar_url,
-        },
-      });
-    },
-    [navigation],
-  );
+  const handleAppointment = useCallback((appointment: Appointment) => {
+    setAppointmentData(appointment);
+  }, []);
 
   return (
     <Container>
@@ -257,6 +260,7 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
             <AppointmentInfo
               next
               onPress={() => {
+                setModalVisibleAppointments(!modalVisibleAppointments);
                 handleAppointment(nextAppointment);
               }}
             >
@@ -269,6 +273,68 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
           </NextAppointment>
         </NextAppointmentContainer>
       )}
+
+      <Modal
+        animationType="slide"
+        transparent
+        visible={modalVisibleAppointments}
+        onRequestClose={() => {
+          setModalVisibleAppointments(!modalVisibleAppointments);
+        }}
+      >
+        <SectionContentModal>
+          <AppointmentContainer key={appointmentData?.user.name}>
+            <AppointmentMeta>
+              <AppointmentMetaIcon>
+                <Icon name="scissors" size={24} color="#ff9000" />
+              </AppointmentMetaIcon>
+            </AppointmentMeta>
+            <AppointmentInfo>
+              <AppointmentMetaText>
+                {appointmentData?.user.name}
+              </AppointmentMetaText>
+            </AppointmentInfo>
+          </AppointmentContainer>
+
+          <AppointmentContainer key={appointmentData?.dateAppointment}>
+            <AppointmentMeta>
+              <AppointmentMetaIcon>
+                <Icon name="calendar" size={24} color="#ff9000" />
+              </AppointmentMetaIcon>
+            </AppointmentMeta>
+            <AppointmentInfo>
+              <AppointmentMetaText>
+                {appointmentData?.dateAppointmentFormatted}
+              </AppointmentMetaText>
+            </AppointmentInfo>
+          </AppointmentContainer>
+
+          <AppointmentContainer key={appointmentData?.hour}>
+            <AppointmentMeta>
+              <AppointmentMetaIcon>
+                <Icon name="clock" size={24} color="#ff9000" />
+              </AppointmentMetaIcon>
+            </AppointmentMeta>
+            <AppointmentInfo>
+              <AppointmentMetaText>{appointmentData?.hour}</AppointmentMetaText>
+            </AppointmentInfo>
+          </AppointmentContainer>
+          <ButtonContainer
+            onPress={() => {
+              setModalVisibleAppointments(!modalVisibleAppointments);
+            }}
+          >
+            <ButtonText>Cancelar Agendamento</ButtonText>
+          </ButtonContainer>
+          <ButtonContainerModal
+            onPress={() => {
+              setModalVisibleAppointments(!modalVisibleAppointments);
+            }}
+          >
+            <Icon name="chevron-left" size={24} color="#999591" />
+          </ButtonContainerModal>
+        </SectionContentModal>
+      </Modal>
 
       <Schedule>
         <Section>
@@ -287,6 +353,7 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
 
                 <AppointmentInfo
                   onPress={() => {
+                    setModalVisibleAppointments(!modalVisibleAppointments);
                     handleAppointment(appointment);
                   }}
                 >
@@ -315,6 +382,7 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
 
                 <AppointmentInfo
                   onPress={() => {
+                    setModalVisibleAppointments(!modalVisibleAppointments);
                     handleAppointment(appointment);
                   }}
                 >

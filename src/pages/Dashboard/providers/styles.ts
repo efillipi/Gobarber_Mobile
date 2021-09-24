@@ -171,3 +171,48 @@ export const AppointmentMetaText = styled.Text`
   font-size: 18px;
   font-family: 'RobotoSlab-Regular';
 `;
+
+export const AppointmentMetaIconContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+`;
+
+export const AppointmentMetaIcon = styled.TouchableOpacity`
+  align-items: center;
+  justify-content: center;
+`;
+
+export const SectionContentModal = styled.View`
+  border-radius: 10px;
+  background: #28262e;
+  padding: 64px 12px 12px 12px;
+  margin: 12px;
+  position: relative;
+  top: 180px;
+`;
+
+export const ButtonContainer = styled.TouchableOpacity`
+  height: 60px;
+  background: #c53030;
+  border-radius: 10px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const ButtonText = styled.Text`
+  font-family: 'RobotoSlab-Medium';
+  color: #f4ede8;
+  font-size: 18px;
+`;
+
+export const ButtonContainerModal = styled.TouchableOpacity`
+  width: 30px;
+  background: #28262e;
+  border-radius: 10px;
+  position: absolute;
+  margin: 12px 0 0 12px;
+  top: 0;
+`;
