@@ -36,7 +36,7 @@ import {
   AppointmentMetaText,
   AppointmentMetaIcon,
   SectionContentModal,
-  ButtonContainer,
+  ButtonCancel,
   ButtonText,
   ButtonContainerModal,
 } from './styles';
@@ -200,6 +200,54 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
     setAppointmentData(appointment);
   }, []);
 
+  const getData = useCallback(() => {
+    api
+      .get<Appointment[]>('/appointments/me', {
+        params: {
+          year: selectedDate.getFullYear(),
+          month: selectedDate.getMonth() + 1,
+          day: selectedDate.getDate(),
+        },
+      })
+      .then((response) => {
+        setAppointmentData(response.data[0]);
+        const appointmentsFormatted = response.data.map((appointment) => ({
+          ...appointment,
+          dateAppointmentFormatted: format(
+            parseISO(appointment.dateAppointment),
+            'MM/dd/yyyy',
+            {
+              locale: ptBR,
+            },
+          ),
+          hourFormatted: parseISO(appointment.dateAppointment),
+          hour: format(parseISO(appointment.dateAppointment), 'HH:mm'),
+        }));
+
+        appointmentsFormatted.sort((a, b) => {
+          return a.hour < b.hour ? -1 : 1;
+        });
+
+        setAppointments(appointmentsFormatted);
+        setModalVisibleAppointments(false);
+      });
+  }, [selectedDate]);
+
+  const handleRejection = useCallback(
+    (id_appointment: string) => {
+      api
+        .post(`/appointments/${id_appointment}/rejection`, {
+          params: {
+            approved: false,
+          },
+        })
+        .then(() => {
+          getData();
+        });
+    },
+    [getData],
+  );
+
   return (
     <Container>
       <Header>
@@ -319,13 +367,13 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
               <AppointmentMetaText>{appointmentData?.hour}</AppointmentMetaText>
             </AppointmentInfo>
           </AppointmentContainer>
-          <ButtonContainer
+          <ButtonCancel
             onPress={() => {
-              setModalVisibleAppointments(!modalVisibleAppointments);
+              handleRejection(appointmentData?.id as string);
             }}
           >
             <ButtonText>Cancelar Agendamento</ButtonText>
-          </ButtonContainer>
+          </ButtonCancel>
           <ButtonContainerModal
             onPress={() => {
               setModalVisibleAppointments(!modalVisibleAppointments);

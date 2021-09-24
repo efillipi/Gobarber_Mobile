@@ -192,7 +192,7 @@ export const SectionContentModal = styled.View`
   top: 180px;
 `;
 
-export const ButtonContainer = styled.TouchableOpacity`
+export const ButtonCancel = styled.TouchableOpacity`
   height: 60px;
   background: #c53030;
   border-radius: 10px;
