@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Modal } from 'react-native';
+import { Alert, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { format, parseISO, isAfter, isToday, addDays } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
@@ -13,10 +13,7 @@ import {
   UserName,
   ProfileButton,
   UserAvatar,
-  Schedule,
-  Section,
   SectionTitle,
-  SectionSubTitle,
   SectionContent,
   TitleContainer,
   Title,
@@ -39,6 +36,8 @@ import {
   ButtonCancel,
   ButtonText,
   ButtonContainerModal,
+  ProvidersList,
+  ProvidersListTitle,
 } from './styles';
 import { objectTransformProvider } from '../../../utils/Calendar/objectTransform';
 import { ProfileScreenNavigationProp } from '../../../routes/StackParamList';
@@ -86,6 +85,7 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
   >([]);
   const [markedDate, setMarkedDate] = useState({});
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     api
@@ -144,18 +144,6 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
     });
   }, [selectedDate]);
 
-  const morningAvailability = useMemo(() => {
-    return appointments.filter(
-      (appointment) => appointment.hourFormatted.getHours() <= 12,
-    );
-  }, [appointments]);
-
-  const afternoonAvailability = useMemo(() => {
-    return appointments.filter(
-      (appointment) => appointment.hourFormatted.getHours() > 12,
-    );
-  }, [appointments]);
-
   const nextAppointment = useMemo(() => {
     return appointments.find((appointment) =>
       isAfter(parseISO(appointment.dateAppointment), new Date()),
@@ -201,6 +189,7 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
   }, []);
 
   const getData = useCallback(() => {
+    setIsLoading(true);
     api
       .get<Appointment[]>('/appointments/me', {
         params: {
@@ -230,6 +219,7 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
 
         setAppointments(appointmentsFormatted);
         setModalVisibleAppointments(false);
+        setIsLoading(false);
       });
   }, [selectedDate]);
 
@@ -367,83 +357,58 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
               <AppointmentMetaText>{appointmentData?.hour}</AppointmentMetaText>
             </AppointmentInfo>
           </AppointmentContainer>
-          <ButtonCancel
-            onPress={() => {
-              handleRejection(appointmentData?.id as string);
-            }}
-          >
-            <ButtonText>Cancelar Agendamento</ButtonText>
-          </ButtonCancel>
+          {isAfter(
+            new Date(appointmentData?.dateAppointment as string),
+            new Date(),
+          ) && (
+            <ButtonCancel
+              onPress={() => {
+                handleRejection(appointmentData?.id as string);
+              }}
+            >
+              <ButtonText>Cancelar Agendamento</ButtonText>
+            </ButtonCancel>
+          )}
           <ButtonContainerModal
             onPress={() => {
               setModalVisibleAppointments(!modalVisibleAppointments);
             }}
           >
-            <Icon name="chevron-left" size={24} color="#999591" />
+            <Icon name="x-circle" size={24} color="#999591" />
           </ButtonContainerModal>
         </SectionContentModal>
       </Modal>
-
-      <Schedule>
-        <Section>
-          <SectionTitle>Manhã</SectionTitle>
-
-          {morningAvailability.length === 0 && (
-            <SectionSubTitle>Nenhum agendamento neste período</SectionSubTitle>
-          )}
+      <ProvidersList
+        data={appointments}
+        keyExtractor={(appointment) => appointment.id}
+        ListHeaderComponent={
+          <ProvidersListTitle>Futuros Agendamentos</ProvidersListTitle>
+        }
+        refreshing={isLoading}
+        onRefresh={getData}
+        renderItem={({ item: appointment }) => (
           <SectionContent>
-            {morningAvailability.map((appointment) => (
-              <AppointmentContainer key={appointment.id}>
-                <AppointmentMeta>
-                  <Icon name="clock" size={14} color="#ff9000" />
-                  <AppointmentMetaText>{appointment.hour}</AppointmentMetaText>
-                </AppointmentMeta>
+            <AppointmentContainer key={appointment.id}>
+              <AppointmentMeta>
+                <Icon name="clock" size={14} color="#ff9000" />
+                <AppointmentMetaText>{appointment.hour}</AppointmentMetaText>
+              </AppointmentMeta>
 
-                <AppointmentInfo
-                  onPress={() => {
-                    setModalVisibleAppointments(!modalVisibleAppointments);
-                    handleAppointment(appointment);
-                  }}
-                >
-                  <AppointmentAvatar
-                    source={{ uri: appointment.user.avatar_url }}
-                  />
-                  <AppointmentName>{appointment.user.name}</AppointmentName>
-                </AppointmentInfo>
-              </AppointmentContainer>
-            ))}
+              <AppointmentInfo
+                onPress={() => {
+                  setModalVisibleAppointments(!modalVisibleAppointments);
+                  handleAppointment(appointment);
+                }}
+              >
+                <AppointmentAvatar
+                  source={{ uri: appointment.user.avatar_url }}
+                />
+                <AppointmentName>{appointment.user.name}</AppointmentName>
+              </AppointmentInfo>
+            </AppointmentContainer>
           </SectionContent>
-        </Section>
-
-        <Section>
-          <SectionTitle>Tarde</SectionTitle>
-          {afternoonAvailability.length === 0 && (
-            <SectionSubTitle>Nenhum agendamento neste período</SectionSubTitle>
-          )}
-          <SectionContent>
-            {afternoonAvailability.map((appointment) => (
-              <AppointmentContainer key={appointment.id}>
-                <AppointmentMeta>
-                  <Icon name="clock" size={14} color="#ff9000" />
-                  <AppointmentMetaText>{appointment.hour}</AppointmentMetaText>
-                </AppointmentMeta>
-
-                <AppointmentInfo
-                  onPress={() => {
-                    setModalVisibleAppointments(!modalVisibleAppointments);
-                    handleAppointment(appointment);
-                  }}
-                >
-                  <AppointmentAvatar
-                    source={{ uri: appointment.user.avatar_url }}
-                  />
-                  <AppointmentName>{appointment.user.name}</AppointmentName>
-                </AppointmentInfo>
-              </AppointmentContainer>
-            ))}
-          </SectionContent>
-        </Section>
-      </Schedule>
+        )}
+      />
     </Container>
   );
 };
