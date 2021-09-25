@@ -38,6 +38,7 @@ import {
   ButtonContainerModal,
   ProvidersList,
   ProvidersListTitle,
+  ProvidersListTitleNull,
 } from './styles';
 import { objectTransformProvider } from '../../../utils/Calendar/objectTransform';
 import { ProfileScreenNavigationProp } from '../../../routes/StackParamList';
@@ -378,11 +379,18 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
           </ButtonContainerModal>
         </SectionContentModal>
       </Modal>
+
       <ProvidersList
         data={appointments}
         keyExtractor={(appointment) => appointment.id}
         ListHeaderComponent={
-          <ProvidersListTitle>Futuros Agendamentos</ProvidersListTitle>
+          appointments.length === 0 ? (
+            <ProvidersListTitle>
+              Nenhum agendamento neste período
+            </ProvidersListTitle>
+          ) : (
+            <ProvidersListTitleNull />
+          )
         }
         refreshing={isLoading}
         onRefresh={getData}

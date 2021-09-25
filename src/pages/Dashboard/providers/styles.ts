@@ -183,12 +183,11 @@ export const AppointmentMetaIcon = styled.TouchableOpacity`
 `;
 
 export const SectionContentModal = styled.View`
+  flex: none;
   border-radius: 10px;
   background: #28262e;
   padding: 84px 12px 12px 12px;
-  margin: 12px;
-  position: relative;
-  top: 180px;
+  margin: 200px 12px 12px 12px;
 `;
 
 export const ButtonCancel = styled.TouchableOpacity`
@@ -210,7 +209,6 @@ export const ButtonText = styled.Text`
 export const ButtonContainerModal = styled.TouchableOpacity`
   width: 50px;
   height: 50px;
-  background: #28262e;
   border-radius: 10px;
   position: absolute;
   margin: 12px 0 0 12px;
@@ -229,7 +227,9 @@ export const ProvidersList = styled(
 
 export const ProvidersListTitle = styled.Text`
   font-family: 'RobotoSlab-Medium';
-  color: #f4ede8;
+  color: #999591;
   font-size: 24px;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
 `;
+
+export const ProvidersListTitleNull = styled.View``;
