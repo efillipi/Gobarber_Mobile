@@ -47,6 +47,7 @@ const AppointmentCreated: React.FC<ProfileScreenNavigationProp> = ({
 
       <Title>Agendamento concluído</Title>
       <Description>{formattedDate}</Description>
+      <Description>Aguarde Aprovação</Description>
 
       <OkButton onPress={handleOk}>
         <OkButtonText>Ok</OkButtonText>

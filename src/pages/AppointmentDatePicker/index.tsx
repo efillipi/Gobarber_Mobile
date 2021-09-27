@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import { addDays, format } from 'date-fns';
+import { Alert } from 'react-native';
 import Calendars from '../../components/Calendar';
 import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
 import api from '../../services/api';
@@ -11,7 +12,6 @@ import {
   Container,
   Header,
   BackButton,
-  HeaderTitle,
   ProfileButton,
   UserAvatar,
   ProvidersListContainer,
@@ -75,6 +75,8 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const [selectedHour, setSelectedHour] = useState(0);
+  const [selectedHourAvailable, setSelectedHourAvailable] = useState(false);
+
   const [markedDate, setMarkedDate] = useState({});
 
   const [providers, setProviders] = useState<Provider[]>([]);
@@ -133,26 +135,37 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
   }, []);
 
   const handleCreateAppointment = useCallback(async () => {
-    const date = selectedDate;
+    if (selectedHourAvailable === false) {
+      Alert.alert('Horário Bloqueado', 'Por favor, escolha outro horário ');
+    } else {
+      const date = selectedDate;
 
-    date.setHours(selectedHour);
-    date.setMinutes(0);
+      date.setHours(selectedHour);
+      date.setMinutes(0);
 
-    const findProdiver = providers.find(
-      (provider) => provider.id === selectedProvider,
-    );
+      const findProdiver = providers.find(
+        (provider) => provider.id === selectedProvider,
+      );
 
-    const provider = {
-      id: findProdiver?.id as string,
-      name: findProdiver?.name as string,
-      avatar_url: findProdiver?.avatar_url as string,
-    };
+      const provider = {
+        id: findProdiver?.id as string,
+        name: findProdiver?.name as string,
+        avatar_url: findProdiver?.avatar_url as string,
+      };
 
-    navigation.navigate('AppointmentConfirmation', {
-      date: date.getTime(),
-      provider,
-    });
-  }, [selectedProvider, selectedDate, selectedHour, navigation, providers]);
+      navigation.navigate('AppointmentConfirmation', {
+        date: date.getTime(),
+        provider,
+      });
+    }
+  }, [
+    selectedProvider,
+    selectedDate,
+    selectedHour,
+    navigation,
+    providers,
+    selectedHourAvailable,
+  ]);
 
   const morningAvailability = useMemo(() => {
     return availability
@@ -239,6 +252,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
                   key={hourFormatted}
                   onPress={() => {
                     setSelectedHour(hour);
+                    setSelectedHourAvailable(available);
                   }}
                 >
                   <Hour
@@ -265,6 +279,7 @@ const AppointmentDatePicker: React.FC<ProfileScreenNavigationProp> = ({
                     key={hourFormatted}
                     onPress={() => {
                       setSelectedHour(hour);
+                      setSelectedHourAvailable(available);
                     }}
                   >
                     <Hour
