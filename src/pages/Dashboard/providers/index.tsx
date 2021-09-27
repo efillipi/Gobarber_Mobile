@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Alert, Modal } from 'react-native';
+import { Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { format, parseISO, isAfter, isToday, addDays } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
@@ -103,7 +103,7 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
           ...appointment,
           dateAppointmentFormatted: format(
             parseISO(appointment.dateAppointment),
-            'MM/dd/yyyy',
+            'dd/MM/yyyy',
             {
               locale: ptBR,
             },
@@ -226,15 +226,9 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
 
   const handleRejection = useCallback(
     (id_appointment: string) => {
-      api
-        .post(`/appointments/${id_appointment}/rejection`, {
-          params: {
-            approved: false,
-          },
-        })
-        .then(() => {
-          getData();
-        });
+      api.post(`/appointments/${id_appointment}/cancel`).then(() => {
+        getData();
+      });
     },
     [getData],
   );

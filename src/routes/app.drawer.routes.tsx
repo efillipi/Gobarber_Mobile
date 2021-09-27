@@ -9,6 +9,7 @@ import AppUser from './appUser.routes';
 import AppointmentsClient from '../pages/AppointmentsClient';
 import AppointmentsProvider from '../pages/AppointmentsProvider';
 import Profile from '../pages/Profile';
+import AppointmentsClientHistoric from '../pages/AppointmentsClientHistoric';
 
 const Drawer = createDrawerNavigator();
 
@@ -102,6 +103,13 @@ const MyDrawerClient: React.FC = () => {
         }}
         name="Agendamentos"
         component={AppointmentsClient}
+      />
+      <Drawer.Screen
+        options={{
+          drawerIcon: () => <Icon name="archive" size={24} color="#312e38" />,
+        }}
+        name="Historico"
+        component={AppointmentsClientHistoric}
       />
     </Drawer.Navigator>
   );

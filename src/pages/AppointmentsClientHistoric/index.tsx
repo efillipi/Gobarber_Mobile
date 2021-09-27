@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import Icon from 'react-native-vector-icons/Feather';
-import { format, parseISO, isAfter } from 'date-fns';
-import ptBR from 'date-fns/locale/pt-BR';
 import { Modal } from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
+import { format, parseISO, isBefore } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
-
 import {
   Container,
   Header,
@@ -13,11 +12,7 @@ import {
   UserAvatar,
   SectionTitle,
   SectionContent,
-  TitleInfo,
   BackButton,
-  AppointmentBorder,
-  NextAppointmentContainer,
-  NextAppointment,
   AppointmentContainer,
   AppointmentInfo,
   AppointmentMeta,
@@ -26,8 +21,6 @@ import {
   SectionContentModal,
   AppointmentMetaIcon,
   ButtonContainerModal,
-  ButtonCancel,
-  ButtonText,
   ProvidersList,
   ProvidersListTitle,
   ProvidersListTitleNull,
@@ -51,26 +44,22 @@ export interface Appointment {
   };
 }
 
-const AppointmentsClient: React.FC<ProfileScreenNavigationProp> = ({
+const AppointmentsClientHistoric: React.FC<ProfileScreenNavigationProp> = ({
   navigation,
 }) => {
   const { user } = useAuth();
 
+  const [isLoading, setIsLoading] = useState(false);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [appointmentData, setAppointmentData] = useState<Appointment>();
   const [modalVisibleAppointments, setModalVisibleAppointments] =
     useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const handleAppointment = useCallback((appointment: Appointment) => {
-    setAppointmentData(appointment);
-  }, []);
 
   useEffect(() => {
     api
       .get<Appointment[]>('/appointments', {
         params: {
           id_client: user.id,
-          approved: true,
         },
       })
       .then((response) => {
@@ -79,7 +68,7 @@ const AppointmentsClient: React.FC<ProfileScreenNavigationProp> = ({
           hour: format(parseISO(appointment.dateAppointment), 'HH:mm'),
           dateAppointmentFormatted: format(
             parseISO(appointment.dateAppointment),
-            'MM/dd/yyyy',
+            'dd/MM/yyyy',
             {
               locale: ptBR,
             },
@@ -101,15 +90,13 @@ const AppointmentsClient: React.FC<ProfileScreenNavigationProp> = ({
       });
   }, [user]);
 
-  const nextAppointment = useMemo(() => {
-    return appointments.find((appointment) =>
-      isAfter(parseISO(appointment.dateAppointment), new Date()),
-    );
-  }, [appointments]);
+  const handleAppointment = useCallback((appointment: Appointment) => {
+    setAppointmentData(appointment);
+  }, []);
 
-  const futureAppointments = useMemo(() => {
+  const pastAppointments = useMemo(() => {
     return appointments.filter((appointment) =>
-      isAfter(new Date(appointment.dateAppointment), new Date()),
+      isBefore(new Date(appointment.dateAppointment), new Date()),
     );
   }, [appointments]);
 
@@ -128,7 +115,7 @@ const AppointmentsClient: React.FC<ProfileScreenNavigationProp> = ({
           hour: format(parseISO(appointment.dateAppointment), 'HH:mm'),
           dateAppointmentFormatted: format(
             parseISO(appointment.dateAppointment),
-            'MM/dd/yyyy',
+            'dd/MM/yyyy',
             {
               locale: ptBR,
             },
@@ -152,15 +139,6 @@ const AppointmentsClient: React.FC<ProfileScreenNavigationProp> = ({
       });
   }, [user]);
 
-  const handleRejection = useCallback(
-    (id_appointment: string) => {
-      api.post(`/appointments/${id_appointment}/cancel`).then(() => {
-        getData();
-      });
-    },
-    [getData],
-  );
-
   return (
     <Container>
       <Header>
@@ -172,36 +150,6 @@ const AppointmentsClient: React.FC<ProfileScreenNavigationProp> = ({
           <UserAvatar source={{ uri: user.avatar_url }} />
         </ProfileButton>
       </Header>
-
-      {nextAppointment && (
-        <NextAppointmentContainer>
-          <TitleInfo>Agendamento a seguir </TitleInfo>
-
-          <NextAppointment>
-            <AppointmentMeta>
-              <AppointmentMetaDescription>
-                {nextAppointment?.dateFormatted}
-              </AppointmentMetaDescription>
-              <AppointmentMetaDescription>
-                {nextAppointment?.hour}
-              </AppointmentMetaDescription>
-            </AppointmentMeta>
-
-            <AppointmentInfo
-              next
-              onPress={() => {
-                setModalVisibleAppointments(!modalVisibleAppointments);
-                handleAppointment(nextAppointment);
-              }}
-            >
-              <AppointmentBorder />
-              <AppointmentMetaText>
-                Agendado com{'\n'} {nextAppointment.provider.name}
-              </AppointmentMetaText>
-            </AppointmentInfo>
-          </NextAppointment>
-        </NextAppointmentContainer>
-      )}
 
       <Modal
         animationType="slide"
@@ -248,18 +196,6 @@ const AppointmentsClient: React.FC<ProfileScreenNavigationProp> = ({
               <AppointmentMetaText>{appointmentData?.hour}</AppointmentMetaText>
             </AppointmentInfo>
           </AppointmentContainer>
-          {isAfter(
-            new Date(appointmentData?.dateAppointment as string),
-            new Date(),
-          ) && (
-            <ButtonCancel
-              onPress={() => {
-                handleRejection(appointmentData?.id as string);
-              }}
-            >
-              <ButtonText>Cancelar Agendamento</ButtonText>
-            </ButtonCancel>
-          )}
           <ButtonContainerModal
             onPress={() => {
               setModalVisibleAppointments(!modalVisibleAppointments);
@@ -269,13 +205,13 @@ const AppointmentsClient: React.FC<ProfileScreenNavigationProp> = ({
           </ButtonContainerModal>
         </SectionContentModal>
       </Modal>
-      <SectionTitle>Agendamentos Futuros</SectionTitle>
 
+      <SectionTitle>Agendamentos Passados</SectionTitle>
       <ProvidersList
-        data={futureAppointments}
+        data={pastAppointments}
         keyExtractor={(appointment) => appointment.id}
         ListHeaderComponent={
-          futureAppointments.length === 0 ? (
+          pastAppointments.length === 0 ? (
             <ProvidersListTitle>
               Nenhum agendamento neste período
             </ProvidersListTitle>
@@ -298,6 +234,7 @@ const AppointmentsClient: React.FC<ProfileScreenNavigationProp> = ({
               </AppointmentMeta>
 
               <AppointmentInfo
+                next
                 onPress={() => {
                   setModalVisibleAppointments(!modalVisibleAppointments);
                   handleAppointment(appointment);
@@ -314,4 +251,4 @@ const AppointmentsClient: React.FC<ProfileScreenNavigationProp> = ({
     </Container>
   );
 };
-export default AppointmentsClient;
+export default AppointmentsClientHistoric;

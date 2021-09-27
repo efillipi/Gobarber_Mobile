@@ -3,7 +3,8 @@ import {
   getStatusBarHeight,
   getBottomSpace,
 } from 'react-native-iphone-x-helper';
-import { FlatList, Platform } from 'react-native';
+import { Platform, FlatList } from 'react-native';
+
 import { Appointment } from '.';
 
 interface Props {
@@ -55,23 +56,6 @@ export const TitleInfo = styled.Text`
   font-size: 24px;
   font-family: 'RobotoSlab-Regular';
   margin: 0 24px 24px;
-`;
-
-export const NextAppointmentContainer = styled.View``;
-
-export const AppointmentBorder = styled.View`
-  background: #ff9000;
-  height: 100%;
-  width: 2px;
-  margin-right: 10px;
-`;
-
-export const NextAppointment = styled.TouchableOpacity`
-  flex-direction: row;
-  justify-content: center;
-  margin-bottom: 16px;
-  border-radius: 10px;
-  margin: 0 24px 10px;
 `;
 
 export const Schedule = styled.ScrollView.attrs({
@@ -174,21 +158,6 @@ export const ButtonContainerModal = styled.TouchableOpacity`
   position: absolute;
   margin: 12px 0 0 12px;
   top: 0;
-`;
-export const ButtonCancel = styled.TouchableOpacity`
-  height: 60px;
-  background: #c53030;
-  border-radius: 10px;
-  margin-top: 12px;
-  margin-bottom: 12px;
-  justify-content: center;
-  align-items: center;
-`;
-
-export const ButtonText = styled.Text`
-  font-family: 'RobotoSlab-Medium';
-  color: #f4ede8;
-  font-size: 18px;
 `;
 
 export const ProvidersList = styled(
