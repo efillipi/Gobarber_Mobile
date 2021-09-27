@@ -86,7 +86,7 @@ export const SectionTitle = styled.Text`
   font-size: 24px;
   color: #999591;
   font-family: 'RobotoSlab-Regular';
-  margin: 24px 24px;
+  margin: 12px 12px;
 `;
 
 export const SectionSubTitle = styled.Text`
