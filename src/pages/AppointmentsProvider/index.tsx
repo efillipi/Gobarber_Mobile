@@ -147,7 +147,13 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
         data={appointments}
         keyExtractor={(appointment) => appointment.id}
         ListHeaderComponent={
-          <ProvidersListTitle>Futuros Agendamentos</ProvidersListTitle>
+          appointments.length === 0 ? (
+            <ProvidersListTitle>
+              Nenhum agendamento neste período
+            </ProvidersListTitle>
+          ) : (
+            <ProvidersListTitle>Futuros Agendamentos</ProvidersListTitle>
+          )
         }
         refreshing={isLoading}
         onRefresh={getData}

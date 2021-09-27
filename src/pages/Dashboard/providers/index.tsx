@@ -117,6 +117,9 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
         });
 
         setAppointments(appointmentsFormatted);
+        if (appointmentsFormatted.length < 3) {
+          setModalVisible(true);
+        }
       });
   }, [selectedDate]);
 
