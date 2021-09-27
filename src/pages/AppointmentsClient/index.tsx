@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import { format, parseISO, isAfter } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
-import { Modal } from 'react-native';
+import { Alert, Modal } from 'react-native';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/auth';
 
@@ -154,9 +154,20 @@ const AppointmentsClient: React.FC<ProfileScreenNavigationProp> = ({
 
   const handleRejection = useCallback(
     (id_appointment: string) => {
-      api.post(`/appointments/${id_appointment}/cancel`).then(() => {
-        getData();
-      });
+      Alert.alert('Cancelar Agendamento', 'Deseja Cancelar Agendamento?', [
+        {
+          text: 'Não',
+          onPress: () => setModalVisibleAppointments(false),
+          style: 'cancel',
+        },
+        {
+          text: 'Sim',
+          onPress: () =>
+            api.post(`/appointments/${id_appointment}/cancel`).then(() => {
+              getData();
+            }),
+        },
+      ]);
     },
     [getData],
   );
