@@ -205,7 +205,7 @@ const Dashboard: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
           ...appointment,
           dateAppointmentFormatted: format(
             parseISO(appointment.dateAppointment),
-            'MM/dd/yyyy',
+            'dd/MM/yyyy',
             {
               locale: ptBR,
             },

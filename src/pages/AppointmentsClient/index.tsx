@@ -79,7 +79,7 @@ const AppointmentsClient: React.FC<ProfileScreenNavigationProp> = ({
           hour: format(parseISO(appointment.dateAppointment), 'HH:mm'),
           dateAppointmentFormatted: format(
             parseISO(appointment.dateAppointment),
-            'MM/dd/yyyy',
+            'dd/MM/yyyy',
             {
               locale: ptBR,
             },
@@ -128,7 +128,7 @@ const AppointmentsClient: React.FC<ProfileScreenNavigationProp> = ({
           hour: format(parseISO(appointment.dateAppointment), 'HH:mm'),
           dateAppointmentFormatted: format(
             parseISO(appointment.dateAppointment),
-            'MM/dd/yyyy',
+            'dd/MM/yyyy',
             {
               locale: ptBR,
             },
