@@ -29,6 +29,8 @@ type StackParamList = {
       avatar_url: string;
     };
   };
+  ForgotPassword: undefined;
+  ResetPassword: undefined;
 };
 
 export type ProfileScreenNavigationProp =
