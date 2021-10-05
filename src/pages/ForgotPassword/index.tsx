@@ -29,10 +29,8 @@ import {
 import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
 import api from '../../services/api';
 
-interface SignUpFormData {
-  name: string;
+interface ForgotPasswordFormData {
   email: string;
-  password: string;
 }
 
 const ForgotPassword: React.FC<ProfileScreenNavigationProp> = ({
@@ -44,8 +42,9 @@ const ForgotPassword: React.FC<ProfileScreenNavigationProp> = ({
 
   const [modalVisibleAppointments, setModalVisibleAppointments] =
     useState(false);
-  const handleSignUp = useCallback(
-    async (data: SignUpFormData) => {
+
+  const handleForgotPassword = useCallback(
+    async (data: ForgotPasswordFormData) => {
       try {
         formRef.current?.setErrors({});
 
@@ -80,7 +79,7 @@ const ForgotPassword: React.FC<ProfileScreenNavigationProp> = ({
           return;
         }
 
-        Alert.alert('Erro no cadastro', `${err.response.data.message}`);
+        Alert.alert('Erro no envio', `${err.response.data.message}`);
       }
     },
     [navigation],
@@ -98,8 +97,8 @@ const ForgotPassword: React.FC<ProfileScreenNavigationProp> = ({
       >
         <SectionContentModal>
           <Image source={logoImg} />
-          <ActivityIndicator size="large" color="#999" />
           <Title>Enviando e-mail ...</Title>
+          <ActivityIndicator size="large" color="#999" />
         </SectionContentModal>
       </Modal>
 
@@ -117,7 +116,7 @@ const ForgotPassword: React.FC<ProfileScreenNavigationProp> = ({
             <View>
               <Title>Recuperar senha</Title>
             </View>
-            <Form ref={formRef} onSubmit={handleSignUp}>
+            <Form ref={formRef} onSubmit={handleForgotPassword}>
               <Input
                 ref={emailInputRef}
                 keyboardType="email-address"
@@ -126,6 +125,11 @@ const ForgotPassword: React.FC<ProfileScreenNavigationProp> = ({
                 name="email"
                 icon="mail"
                 placeholder="E-mail"
+                returnKeyType="send"
+                onSubmitEditing={() => {
+                  formRef.current?.submitForm();
+                  setModalVisibleAppointments(!modalVisibleAppointments);
+                }}
               />
 
               <Button

@@ -9,77 +9,71 @@ import {
   TextInput,
 } from 'react-native';
 import * as Yup from 'yup';
-
-import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/Feather';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import getValidationErrors from '../../utils/getValidationErrors';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import logoImg from '../../assets/logo.png';
-import { Container, Title } from './styles';
+import { Container, Title, BackToSignIn, BackToSignInText } from './styles';
 import api from '../../services/api';
+import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
 
-interface SignUpFormData {
+interface ResetPasswordFormData {
   name: string;
   email: string;
   password: string;
 }
 
-const ResetPassword: React.FC = () => {
+const ResetPassword: React.FC<ProfileScreenNavigationProp> = ({
+  navigation,
+}) => {
   const formRef = useRef<FormHandles>(null);
-  const navigation = useNavigation();
 
-  const tokenInputRef = useRef<TextInput>(null);
-  const newPasswordInputRef = useRef<TextInput>(null);
-  const confirmPasswordInputRef = useRef<TextInput>(null);
+  const passwordInputRef = useRef<TextInput>(null);
+  const new_passwordInputRef = useRef<TextInput>(null);
 
-  const handleSignUp = useCallback(
-    async (data: SignUpFormData) => {
+  const handleResetPassword = useCallback(
+    async (data: ResetPasswordFormData) => {
       try {
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
-          token: Yup.string().required('Nome obrigatório'),
-          password: Yup.string().when('old_password', {
-            is: (val: any) => !!val.length,
-            then: Yup.string().required('Campo obrigatório'),
-            otherwise: Yup.string(),
-          }),
+          token: Yup.string().required('Token obrigatório '),
+          password: Yup.string().min(
+            6,
+            'No mínimo 6 dígitos no campo de Nova senha ',
+          ),
           password_confirmation: Yup.string()
-            .when('old_password', {
-              is: (val: any) => !!val.length,
-              then: Yup.string().required('Campo obrigatório'),
-              otherwise: Yup.string(),
-            })
-            .oneOf([Yup.ref('password'), null], 'Confirmação incorreta'),
+            .oneOf([Yup.ref('password'), null], 'Confirmação incorreta ')
+            .min(6, 'No mínimo 6 dígitos no campo de Confirmação de senha '),
         });
 
         await schema.validate(data, {
           abortEarly: false,
         });
 
-        await api.post('/users', data);
+        await api.post('/password/reset', data);
 
         Alert.alert(
-          'Cadastro realizado com sucesso!',
+          'Reset realizado com sucesso!',
           'Você já pode fazer login na aplicação.',
         );
 
-        navigation.goBack();
-      } catch (err) {
+        navigation.navigate('SignIn');
+      } catch (err: any) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
 
           formRef.current?.setErrors(errors);
 
+          Alert.alert('Erro no processo', `${err.errors}`);
+
           return;
         }
 
-        Alert.alert(
-          'Erro no cadastro',
-          'Ocorreu um erro ao fazer cadastro, tente novamente.',
-        );
+        Alert.alert('Erro no processo', `${err.response.data.message}`);
       }
     },
     [navigation],
@@ -99,53 +93,57 @@ const ResetPassword: React.FC = () => {
           <Container>
             <Image source={logoImg} />
             <View>
-              <Title>Crie sua conta</Title>
+              <Title>Resetar senha</Title>
             </View>
-            <Form ref={formRef} onSubmit={handleSignUp}>
+            <Form ref={formRef} onSubmit={handleResetPassword}>
               <Input
                 autoCapitalize="words"
                 name="token"
-                icon="user"
-                placeholder="token"
+                icon="lock"
+                placeholder="Token enviado ao email"
                 returnKeyType="next"
                 onSubmitEditing={() => {
-                  tokenInputRef.current?.focus();
+                  new_passwordInputRef.current?.focus();
                 }}
               />
 
               <Input
-                ref={newPasswordInputRef}
+                ref={new_passwordInputRef}
                 secureTextEntry
                 name="password"
                 icon="lock"
                 placeholder="Nova senha"
                 textContentType="newPassword"
                 returnKeyType="next"
-                onSubmitEditing={() => confirmPasswordInputRef.current?.focus()}
+                onSubmitEditing={() => {
+                  passwordInputRef.current?.focus();
+                }}
               />
 
               <Input
-                ref={confirmPasswordInputRef}
+                ref={passwordInputRef}
                 secureTextEntry
                 name="password_confirmation"
                 icon="lock"
-                placeholder="Confirmar senha"
+                placeholder="Confirmação da senha"
                 textContentType="newPassword"
                 returnKeyType="send"
-                onSubmitEditing={() => formRef.current?.submitForm()}
-              />
-
-              <Button
-                onPress={() => {
+                onSubmitEditing={() => {
                   formRef.current?.submitForm();
                 }}
-              >
-                Entrar
+              />
+
+              <Button onPress={() => formRef.current?.submitForm()}>
+                Alterar senha
               </Button>
             </Form>
           </Container>
         </ScrollView>
       </KeyboardAvoidingView>
+      <BackToSignIn onPress={() => navigation.goBack()}>
+        <Icon name="arrow-left" size={20} color="#ff9000" />
+        <BackToSignInText>Voltar para logon</BackToSignInText>
+      </BackToSignIn>
     </>
   );
 };
