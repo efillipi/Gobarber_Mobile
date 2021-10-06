@@ -25,9 +25,9 @@ const DrawerNavigation: React.FC<DrawerContentProps> = ({ props }) => {
 
   return (
     <Container>
-      <Header>
+      {/* <Header>
         <UserAvatar source={{ uri: user.avatar_url }} />
-      </Header>
+      </Header> */}
       <Content>
         <DrawerItemListContent>
           <DrawerItemList {...props} />
