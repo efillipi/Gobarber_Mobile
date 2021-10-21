@@ -125,7 +125,7 @@ const Profile: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
         );
       }
     },
-    [navigation],
+    [navigation, updateUser],
   );
 
   const handleUpdateAvatar = useCallback(() => {
@@ -167,7 +167,7 @@ const Profile: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
         });
       },
     );
-  }, [user]);
+  }, [user, updateUser]);
 
   return (
     <>

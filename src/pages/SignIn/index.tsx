@@ -127,7 +127,9 @@ const SignIn: React.FC<ProfileScreenNavigationProp> = ({ navigation }) => {
                 Entrar
               </Button>
             </Form>
-            <ForgotPassword>
+            <ForgotPassword
+              onPress={() => navigation.navigate('ForgotPassword')}
+            >
               <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>
             </ForgotPassword>
           </Container>

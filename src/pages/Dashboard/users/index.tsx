@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 
-import api from '../../services/api';
-import { useAuth } from '../../hooks/auth';
+import api from '../../../services/api';
+import { useAuth } from '../../../hooks/auth';
 import {
   Container,
   Header,
@@ -20,7 +20,7 @@ import {
   ProviderMetaText,
 } from './styles';
 
-import { ProfileScreenNavigationProp } from '../../routes/StackParamList';
+import { ProfileScreenNavigationProp } from '../../../routes/StackParamList';
 
 export interface Provider {
   id: string;

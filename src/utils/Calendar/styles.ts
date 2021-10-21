@@ -39,6 +39,19 @@ export const unavailableDaysStyles = {
   },
 };
 
+export const unavailableDaysStylesProvider = {
+  customStyles: {
+    container: {
+      backgroundColor: '#3e3b47',
+      opacity: 0.6,
+      borderRadius: 10,
+    },
+    text: {
+      color: '#f4ede89b',
+    },
+  },
+};
+
 export const daysOffStyles = {
   disableTouchEvent: true,
   customStyles: {
