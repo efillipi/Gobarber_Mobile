@@ -9,7 +9,8 @@
     "test": "jest",
     "lint": "eslint ./src/ --ext .js,.jsx,.ts,.tsx",
     "dev:clear": "watchman watch-del-all && rm -f yarn.lock && rm -fr $TMPDIR/metro-cache && rm -rf node_modules && yarn && yarn start --reset-cache",
-    "android:bundle:debug": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/"
+    "android:bundle:debug": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res/",
+    "android:bundle:release": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/build/intermediates/res/merged/release/"
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.12.1",
